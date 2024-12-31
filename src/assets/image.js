@@ -13,6 +13,9 @@ import search from './profile/search.png'
 import logo from './image/logo.png'
 import github from './image/github.png'
 import google from './image/google.png'
+import privates from './image/private.png'
+import group from './image/group.png'
+import broadcast from './image/broadcast.png'
 // Tambahkan impor lainnya di sini
 
 const photos = {
@@ -31,6 +34,10 @@ const photos = {
   logo,
   github,
   google,
+  privates,
+  group,
+  broadcast,
+
 };
 
 export default photos;
