@@ -54,34 +54,68 @@ const Reg = () => {
                             {error && <div className="text-red-500">{error}</div>}
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Email</span>
+                                    <span className="label-text text-gray-500">Username</span>
                                 </label>
                                 <input
-                                    type="email"
-                                    placeholder="email"
-                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    type="text"
+                                    placeholder="Username"
+                                    className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                     required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text text-gray-500">Password</span>
-                                </label>
-                                <input
-                                    type="password"
-                                    placeholder="password"
-                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                                <label className="label">
-                                    <a href="#" className="label-text text-gray-500 alt link link-hover">Forgot password?</a>
-                                </label>
+                            <div className="flex gap-4">
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text text-gray-500">Kelas</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Kelas"
+                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text text-gray-500">Divisi</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Divisi"
+                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="form-control mt-6">
+                            <div className="flex gap-4">
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text text-gray-500">Email</span>
+                                    </label>
+                                    <input
+                                        type="email"
+                                        placeholder="Email"
+                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text text-gray-500">Password</span>
+                                    </label>
+                                    <input
+                                        type="password"
+                                        placeholder="password"
+                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-control mt-8">
                                 <button className="mx-auto btn bg-gray-600 input-bordered w-[50%]" disabled={loading}>
                                     {loading ? 'Register in...' : 'Register'}
                                 </button>
@@ -95,7 +129,7 @@ const Reg = () => {
                                     <img src={photos.github} alt="" className="xl:w-8" />
                                 </div>
                             </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">Don’t have an account yet?<a href="#"  className="text-gray-500 alt link link-hover" onClick={() => navigate('/login')}> Register now</a></span>    
+                            <span className="label-text text-gray-500 text-center my-5 text-lg">Already have an account?<a href="#"  className="text-gray-500 alt link link-hover" onClick={() => navigate('/login')}>  Login</a></span>    
                         </div>
                     </form>
                 </div>
