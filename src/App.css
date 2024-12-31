@@ -1,0 +1,12 @@
+.sidebar {
+  color: white;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+.main {
+  display: flex;
+}
+
