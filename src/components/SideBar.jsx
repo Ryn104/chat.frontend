@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import photos from "../assets/image.js";
 // import {
 //   NotificationOutlined,
 //   HistoryOutlined,
@@ -55,28 +56,52 @@ const SideBar = () => {
   return (
     <>
       <div className='xl:px-5 flex justify-center border-r border-gray-700'>
-        <div>
-          <div className="logo flex justify-center">
-            <div className="img">
-              <img src="" alt="" />
+        <div className='flex flex-col justify-between'>
+          <div className=''>
+            <div className="logo flex justify-center xl:my-4">
+              <div className="img flex">
+                <img src={photos.logo} alt="" className='self-center xl:w-10'/>
+              </div>
+              <h1 className='xl:font-semibold xl:text-5xl'>Sent</h1>
             </div>
-            Sent
+            <div className='flex justify-center mt-10'>
+              <button className="xl:w-[7vw]">
+                <div className='flex pl-1'>
+                  <img src={photos.privates} alt="" className='xl:h-[25px] self-center mr-2'/>
+                  <h1 className='xl:text-2xl self-center font-semibold'>Private</h1>
+                </div>
+              </button>
+            </div>
+            <div className='flex justify-center mt-10'>
+              <button className="xl:w-[7vw]">
+                <div className='flex pl-1'>
+                  <img src={photos.group} alt="" className='xl:h-[25px] self-center mr-2'/>
+                  <h1 className='xl:text-2xl self-center font-semibold'>Group</h1>
+                </div>
+              </button>
+            </div>
+            <div className='flex justify-center mt-10'>
+              <button className="xl:w-[7vw]">
+                <div className='flex pl-1'>
+                  <img src={photos.broadcast} alt="" className='xl:h-[25px] self-center mr-2'/>
+                  <h1 className='xl:text-2xl self-center font-semibold'>Broadcast</h1>
+                </div>
+              </button>
+            </div>
           </div>
-          <div className='flex justify-center'>
-            <button className="btn btn-neutral xl:w-[7vw]">
-            <i class="fi fi-br-user"></i>
-              <h1>Private</h1>
-            </button>
-          </div>
-          <div className='flex justify-center'>
-            <button className="btn btn-neutral xl:w-[7vw]">
-              <h1>Group</h1>
-            </button>
-          </div>
-          <div className='flex justify-center'>
-            <button className="btn btn-neutral xl:w-[7vw]">
-              <h1>Broadcast</h1>
-            </button>
+          <div>
+            <div className='flex justify-center mb-5'>
+              <button className="xl:w-[7vw]">
+                <div className='flex pl-1'>
+                  <img src={photos.broadcast} alt="" className='xl:h-[25px] self-center mr-2'/>
+                  <h1 className='xl:text-2xl self-center font-semibold'>Setting</h1>
+                </div>
+              </button>
+            </div>
+            <div className='flex justify-center'>
+              <img src={photos.Riyan} alt="" className='xl:w-16 rounded-full'/>
+              <h1 className='text-xl font-semibold ml-2 self-center'>Riyan Handriyana</h1>
+            </div>
           </div>
         </div>
       </div>
