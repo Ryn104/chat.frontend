@@ -2,17 +2,52 @@ import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const Chat = ({ contactId, chatData }) => {
-    const [username, setUsername] = useState("username");
+const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
+    const [username, setUsername] = useState("Nun"); // Nama pengirim saat ini (sesuaikan)
 
-    const chats = chatData[contactId] || [];
+    const receiverId = 5; // ID penerima yang tetap
+
+    // Ambil token dari localStorage
+    const token = localStorage.getItem("auth_token");
+
+    useEffect(() => {
+        const fetchChatData = async () => {
+            try {
+                const response = await fetch(`http://api-chat.itclub5.my.id/api/chat`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Kirim token di header
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Data dari API:", data); // Debugging: lihat data yang diterima
+                    
+                    // Ambil semua pesan antara sender dan receiver yang relevan
+                    const allMessages = data.flatMap(chat => 
+                        chat.messages.filter(message => 
+                            (message.sender_id === 1 && message.receiver_id === receiverId) || 
+                            (message.sender_id === receiverId && message.receiver_id === 1)
+                        )
+                    );
+
+                    setMessages(allMessages); // Set data pesan ke state
+                } else {
+                    console.error("Gagal mengambil data chat");
+                }
+            } catch (error) {
+                console.error("Terjadi kesalahan saat mengambil data:", error);
+            }
+        };
+
+        fetchChatData();
+    }, [token, receiverId]);
 
     // Mengatur koneksi Pusher
     useEffect(() => {
-        Pusher.logToConsole = true;
-
         const pusher = new Pusher("6cdc86054a25f0168d17", {
             cluster: "ap1",
         });
@@ -32,15 +67,33 @@ const Chat = ({ contactId, chatData }) => {
     const submit = async (e) => {
         e.preventDefault();
 
+        if (!message.trim()) return; // Cek jika pesan kosong
+
+        const newMessage = {
+            receiver_id: receiverId, // ID penerima
+            message_text: message,
+        };
+
         try {
-            const response = await fetch("http://192.168.105.1:8000/api/messages", {
+            const response = await fetch("http://api-chat.itclub5.my.id/api/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, messages }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Kirim token di header
+                },
+                body: JSON.stringify(newMessage),
             });
 
             if (response.ok) {
                 console.log("Pesan berhasil dikirim!");
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        username: username,
+                        message_text: message,
+                        time: new Date().toLocaleTimeString(),
+                    },
+                ]);
                 setMessage(""); // Reset pesan setelah berhasil dikirim
             } else {
                 console.error("Gagal mengirim pesan:", response.status);
@@ -59,19 +112,12 @@ const Chat = ({ contactId, chatData }) => {
                         <div className="flex items-center">
                             <img
                                 className="w-[3.3vw] rounded-full"
-                                src={photos[contactId]}
-                                alt={contactId}
+                                src={photos[receiverId]}
+                                alt={receiverId}
                             />
                         </div>
                         <div className="flex flex-col justify-center">
-                            <input
-                                type="text"
-                                className="grow text-lg"
-                                placeholder="Masukkan Nama"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                            <h1 className="font-semibold text-2xl">{contactId}</h1>
+                            <h1 className="font-semibold text-2xl">Riyan</h1>
                             <p className="text-lg">Terakhir online beberapa waktu lalu.</p>
                         </div>
                     </div>
@@ -80,31 +126,21 @@ const Chat = ({ contactId, chatData }) => {
 
             {/* Daftar Chat */}
             <div className="value-chat px-5 pt-8 h-[83%] overflow-y-auto">
-                {chats.map((chat, index) => {
-                    const nextChat = chats[index + 1];
-                    const shouldShowTime = !nextChat || nextChat.time !== chat.time;
-
-                    return (
+                {messages.length > 0 ? (
+                    messages.map((message, index) => (
                         <div
                             key={index}
-                            className={`chat ${
-                                chat.sender === "Anda" ? "chat-end" : "chat-start"
-                            }`}
+                            className={`chat ${message.sender_id === 1 ? "chat-end" : "chat-start"}`}
                         >
-                            <div className="chat-bubble max-w-[52%]">{chat.message}</div>
-                            {shouldShowTime && (
-                                <div className="chat-footer opacity-50">{chat.time}</div>
-                            )}
+                            <div className="chat-bubble max-w-[52%]">
+                                <strong>{message.sender_name}</strong>: <p>{message.message_text}</p>
+                            </div>
+                            <div className="chat-footer opacity-50">{message.time}</div>
                         </div>
-                    );
-                })}
-                {messages.map((message, index) => (
-                    <div key={index} className="chat chat-start">
-                        <div className="chat-bubble max-w-[52%]">
-                            <strong>{message.username}</strong>: <p>{message.messages}</p> 
-                        </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p>No messages found</p> // Menampilkan pesan jika tidak ada data
+                )}
             </div>
 
             {/* Input Chat */}
@@ -112,7 +148,8 @@ const Chat = ({ contactId, chatData }) => {
                 <form
                     onSubmit={submit}
                     className="input input-bordered flex items-center gap-2 w-full h-[45px]"
-                    method="post">
+                    method="post"
+                >
                     <input
                         type="text"
                         className="grow text-lg"
@@ -130,109 +167,3 @@ const Chat = ({ contactId, chatData }) => {
 };
 
 export default Chat;
-
-
-
-// import React from "react";
-// import photos from "../assets/image.js";
-// import { useEffect, useState } from "react";
-// import Pusher from "pusher-js";
-
-// const Chat = ({ contactId, chatData }) => {
-//     const chats = chatData[contactId] || [];
-
-// const [username, setUsername] = useState('username');
-// const [messages, setMessages] = useState([]);
-// const [message, setMessage] = useState('');
-// let allMessages = [];
-
-// useEffect( () => {
-//     Pusher.logToConsole = true;
-
-//     const pusher = new Pusher('6cdc86054a25f0168d17', {
-//       cluster: 'ap1'
-//     });
-
-//     const channel = pusher.subscribe('chat-channel');
-//     channel.bind('message-sent', function(data) {
-//       allMessages.push(data);
-//       setMessages(allMessages);
-//     });
-// }, []);
-
-// const submit = async (e) => {
-//     e.preventDefault(); // Mencegah reload halaman
-
-//     try {
-//         const response = await fetch('http://127.0.0.1:8000/api/messages', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' }, // Perbaikan typo
-//             body: JSON.stringify({ username, message }),
-//         });
-
-//         if (response.ok) {
-//             console.log("Pesan berhasil dikirim!");
-//             setMessage(''); // Reset pesan setelah berhasil dikirim
-//         } else {
-//             console.error("Gagal mengirim pesan:", response.status);
-//         }
-//     } catch (error) {
-//         console.error("Terjadi kesalahan:", error);
-//     }
-// };
-
-//     return (
-//         <div className="w-full">
-//             <div className="header w-full h-[10%] flex border-b border-gray-700">
-//                 <div className="kontak flex py-3 px-9 justify-between w-full">
-//                     <div className="flex gap-3">
-//                         <div className="flex items-center">
-//                             <img className="w-[3.3vw] rounded-full" src={photos[contactId]} alt={contactId} />
-//                         </div>
-//                         <div className="flex flex-col justify-center">
-//                             <input type="text" className="grow text-lg" placeholder="Mesukan Pesan" value={username} onChange={e => setUsername(e.target.value)}/>  
-//                             <h1 className="font-semibold text-2xl">{contactId}</h1>
-//                             <p className="text-lg">Terakhir online beberapa waktu lalu.</p>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//             <div className="value-chat px-5 pt-8 h-[83%] overflow-y-auto">
-//                 {chats.map((chat, index) => {
-//                     const nextChat = chats[index + 1];
-//                     const shouldShowTime = !nextChat || nextChat.time !== chat.time; // Menampilkan waktu hanya jika pesan berikutnya berbeda atau tidak ada
-
-//                     return (
-//                         <div key={index} className={`chat ${chat.sender === "Anda" ? "chat-end" : "chat-start"}`}>
-//                             <div className="chat-bubble max-w-[52%]">{chat.message}</div>
-//                             {shouldShowTime && <div className="chat-footer opacity-50">{chat.time}</div>}
-//                         </div>
-//                     );
-//                 })}
-//                 {messages.map(message => {
-//                     return (
-//                         <div>
-//                             <div className="chat-bubble max-w-[52%]">
-//                                 <div>
-//                                     {message.username}
-//                                 </div>
-//                                 <div>
-//                                     {message.message}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     )
-//                 })}
-//             </div>
-//             <div className="input-chat px-5">
-//                 <label className="input input-bordered flex items-center gap-2 w-full h-[45px]">
-//                     <form onSubmit={e => submit(e)}>
-//                         <input type="text" className="grow text-lg" placeholder="Mesukan Pesan" value={message} onChange={e => setMessage(e.target.value)}/>
-//                     </form>
-//                 </label>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Chat;

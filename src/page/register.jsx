@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import photos from "../assets/image.js";
 import './login.css';
 
 const Reg = () => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [kelas, setKelas] = useState('');
+    const [divisi, setDivisi] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,24 +20,31 @@ const Reg = () => {
         setError('');
 
         try {
-            const response = await fetch('http://192.168.105.1:8000/login', {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({
+                    name,
+                    email,
+                    kelas,
+                    divisi,
+                    password,
+                    password_confirmation: passwordConfirmation,
+                }),
             });
 
             if (!response.ok) {
-                throw new Error('Login failed');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Registration failed');
             }
 
             const data = await response.json();
-            // Handle successful login (e.g., store token, redirect, etc.)
-            console.log('Login successful:', data);
+            console.log('Registration successful:', data);
 
-            // Redirect to the index page (or any other page)
-            navigate('/'); // Change '/' to the desired route if needed
+            // Redirect to the login page
+            navigate('/login');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -54,13 +65,15 @@ const Reg = () => {
                             {error && <div className="text-red-500">{error}</div>}
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Username</span>
+                                    <span className="label-text text-gray-500">Name</span>
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Username"
+                                    placeholder="Name"
                                     className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                     required
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                 />
                             </div>
                             <div className="flex gap-4">
@@ -73,6 +86,8 @@ const Reg = () => {
                                         placeholder="Kelas"
                                         className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                         required
+                                        value={kelas}
+                                        onChange={(e) => setKelas(e.target.value)}
                                     />
                                 </div>
                                 <div className="form-control">
@@ -84,6 +99,8 @@ const Reg = () => {
                                         placeholder="Divisi"
                                         className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                         required
+                                        value={divisi}
+                                        onChange={(e) => setDivisi(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -107,7 +124,7 @@ const Reg = () => {
                                     </label>
                                     <input
                                         type="password"
-                                        placeholder="password"
+                                        placeholder="Password"
                                         className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                         required
                                         value={password}
@@ -115,12 +132,25 @@ const Reg = () => {
                                     />
                                 </div>
                             </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text text-gray-500">Confirm Password</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm Password"
+                                    className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    required
+                                    value={passwordConfirmation}
+                                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                />
+                            </div>
                             <div className="form-control mt-8">
                                 <button className="mx-auto btn bg-gray-600 input-bordered w-[50%]" disabled={loading}>
-                                    {loading ? 'Register in...' : 'Register'}
+                                    {loading ? 'Registering...' : 'Register'}
                                 </button>
                             </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">or continue with</span>    
+                            <span className="label-text text-gray-500 text-center my-5 text-lg">or continue with</span>
                             <div className="flex justify-center gap-4">
                                 <div className="bg-gray-200 hover:bg-gray-100 px-11 py-4 w-max rounded-xl border-gray-300 border">
                                     <img src={photos.google} alt="" className="xl:w-8" />
@@ -129,12 +159,14 @@ const Reg = () => {
                                     <img src={photos.github} alt="" className="xl:w-8" />
                                 </div>
                             </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">Already have an account?<a href="#"  className="text-gray-500 alt link link-hover" onClick={() => navigate('/login')}>  Login</a></span>    
+                            <span className="label-text text-gray-500 text-center my-5 text-lg">
+                                Already have an account?
+                                <a href="#" className="text-gray-500 alt link link-hover" onClick={() => navigate('/login')}> Login</a>
+                            </span>
                         </div>
                     </form>
                 </div>
-                <div className="text-center lg:text-left">
-                </div>
+                <div className="text-center lg:text-left"></div>
             </div>
         </div>
     );
