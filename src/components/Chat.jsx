@@ -163,14 +163,14 @@ const Chat = () => {
             </div>
 
             {/* Input Chat */}
-            <div className="input-chat px-5">
+            <div className="input-chat px-5 fixed xl:w-[74%]">
                 <form
                     onSubmit={submit}
                     className="input input-bordered flex items-center gap-2 w-full h-[45px]"
                 >
                     <input
                         type="text"
-                        className="grow text-lg"
+                        className="grow text-lg "
                         placeholder="Masukkan Pesan"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
