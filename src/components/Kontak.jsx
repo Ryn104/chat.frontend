@@ -6,12 +6,17 @@ const Kontak = ({ onSelectContact }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true); // Status loading
     const [error, setError] = useState(null); // Status error
-
+    const token = localStorage.getItem("authToken");
     // Fetch data dari API saat komponen dimuat
     useEffect(() => {
         const fetchContacts = async () => {
             try {
-                const response = await fetch("http://api-chat.itclub5.my.id/api/contact");
+                const response = await fetch("http://api-chat.itclub5.my.id/api/contact", {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Kirim token di header
+                    }
+                });
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -55,7 +60,7 @@ const Kontak = ({ onSelectContact }) => {
             className="w-full hover"
             onClick={() => {
                 localStorage.setItem("receiverId", user_id); // Simpan ID ke localStorage
-                localStorage.setItem("receiverName", name); // Simpan Nama ke localStorage
+                localStorage.setItem("receiverName", name); // Simpan ID ke localStorage
                 localStorage.setItem("receiverDivisi", divisi); // Simpan Divisi ke localStorage
                 onSelectContact(user_id); // Panggil callback untuk tindakan lainnya
             }}
