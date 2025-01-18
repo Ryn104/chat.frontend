@@ -111,7 +111,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full">
+        <div className="w-full flex-col justify-between h-[110vh]">
             {/* Header */}
             <div className="header w-full h-[10%] flex border-b border-gray-700">
                 <div className="kontak flex py-3 px-9 justify-between w-full">
