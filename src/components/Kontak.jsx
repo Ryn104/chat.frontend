@@ -1,35 +1,40 @@
-import React, { useState } from "react";
-import chatData from "../assets/chatData"; // Import chatData yang berisi daftar chat
-import photos from "../assets/image.js";
+import React, { useState, useEffect } from "react";
 import './Kontak.css';
 
 const Kontak = ({ onSelectContact }) => {
+    const [contacts, setContacts] = useState([]); // Menyimpan data kontak
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(true); // Status loading
+    const [error, setError] = useState(null); // Status error
 
-    // Fungsi untuk mencari semua pesan dari setiap kontak
-    const searchMessages = (contact) => {
-        const chatHistory = chatData[contact];
-        const filteredMessages = chatHistory.filter(({ message }) =>
-            message.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        return filteredMessages;
-    };
-
-    // Ambil pesan terakhir dari setiap kontak
-    const messages = Object.keys(chatData).map(contact => {
-        const lastMessage = chatData[contact][chatData[contact].length - 1];
-        const searchResults = searchMessages(contact); // Cari chat yang cocok dengan query
-        const isHighlighted = searchResults.length > 0; // Apakah ada pesan yang cocok
-
-        return {
-            id: contact,
-            name: contact,
-            message: lastMessage.message,
-            time: lastMessage.time, // Tambahkan waktu pesan terakhir
-            imgSrc: photos[contact], // Ambil foto dari objek photos
-            isHighlighted,
+    // Fetch data dari API saat komponen dimuat
+    useEffect(() => {
+        const fetchContacts = async () => {
+            try {
+                const response = await fetch("http://api-chat.itclub5.my.id/api/contact");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json(); 
+                setContacts(data); // Simpan data API ke state
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false); // Selesai loading
+            }
         };
-    });
+
+        fetchContacts();
+    }, []);
+
+    
+
+    // Filter kontak berdasarkan pencarian
+    const filteredContacts = contacts.filter(contact =>
+        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (contact.divisi && contact.divisi.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (contact.kelas && contact.kelas.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
 
     const highlightText = (text, query) => {
         if (!query) return text;
@@ -44,37 +49,48 @@ const Kontak = ({ onSelectContact }) => {
         );
     };
 
-    // Filter hanya kontak yang punya hasil pencarian, atau tampilkan semua jika query kosong
-    const filteredMessages = messages.filter(({ name, message, isHighlighted }) =>
-        name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        isHighlighted
-    );
-
-    const renderRow = ({ id, name, message, imgSrc, time }) => (
-        <tr key={id} className="w-full hover" onClick={() => onSelectContact(id)}>
+    const renderRow = ({ user_id, name, avatar, divisi, kelas, last_online }) => (
+        <tr
+            key={user_id}
+            className="w-full hover"
+            onClick={() => {
+                localStorage.setItem("receiverId", user_id); // Simpan ID ke localStorage
+                localStorage.setItem("receiverName", name); // Simpan Nama ke localStorage
+                localStorage.setItem("receiverDivisi", divisi); // Simpan Divisi ke localStorage
+                onSelectContact(user_id); // Panggil callback untuk tindakan lainnya
+            }}
+        >
             <td>
                 <div className="flex items-center gap-3">
                     <div className="avatar">
                         <div className="rounded-full border border-gray-900 h-20 w-20">
-                            <img src={imgSrc} alt={name} />
+                            <img
+                                src={avatar || "default-image.jpg"} // Gunakan gambar default jika avatar null
+                                alt={name}
+                            />
                         </div>
                     </div>
-                    {/* Tooltip hanya menampilkan pesan terakhir */}
-                    <div className="tooltip tooltip-bottom" data-tip={message}>
+                    <div className="tooltip tooltip-bottom" data-tip={name}>
                         <div className="font-bold text-lg text-start">
                             {highlightText(name, searchQuery)}
                         </div>
-                        <div className="message-text opacity-50 text-lg truncate w-[14.5vcd w] text-start">
-                            {highlightText(message, searchQuery)} - <span className="time">{time}</span>
+                        <div className="text-gray-400 text-sm text-start">
+                            Divisi: {highlightText(divisi || "Tidak ada divisi", searchQuery)}
+                        </div>
+                        <div className="text-gray-400 text-sm text-start">
+                            Kelas: {highlightText(kelas || "Tidak ada kelas", searchQuery)}
+                        </div>
+                        <div className="text-gray-500 text-xs text-start">
+                            Last Online: {last_online || "Unknown"}
                         </div>
                     </div>
                 </div>
             </td>
         </tr>
-    );
+    );    
 
-
+    if (loading) return <div>Loading...</div>; // Tampilkan loading jika sedang mengambil data
+    if (error) return <div>Error: {error}</div>; // Tampilkan pesan error jika ada masalah
 
     return (
         <div className="w-[22vw] border-gray-700 border-r">
@@ -93,7 +109,7 @@ const Kontak = ({ onSelectContact }) => {
             <div className="overflow-x-hidden mt-8 h-[85vh]">
                 <table className="table">
                     <tbody>
-                        {filteredMessages.map(renderRow)}
+                        {filteredContacts.map(renderRow)}
                     </tbody>
                 </table>
             </div>

@@ -55,7 +55,7 @@ const SideBar = () => {
 
   return (
     <>
-      <div className='xl:px-5 flex justify-center border-r border-gray-700'>
+      <div className='xl:px-5 flex justify-center border-r border-gray-700 xl:h-[100vh]'>
         <div className='flex flex-col justify-between'>
           <div className=''>
             <div className="logo flex justify-center xl:my-4">
@@ -89,7 +89,7 @@ const SideBar = () => {
               </button>
             </div>
           </div>
-          <div>
+          <div className='mb-5'>
             <div className='flex justify-center mb-5'>
               <button className="xl:w-[7vw]">
                 <div className='flex pl-1'>

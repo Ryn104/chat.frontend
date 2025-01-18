@@ -139,7 +139,7 @@ const Reg = () => {
                                 <input
                                     type="password"
                                     placeholder="Confirm Password"
-                                    className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
                                     required
                                     value={passwordConfirmation}
                                     onChange={(e) => setPasswordConfirmation(e.target.value)}
