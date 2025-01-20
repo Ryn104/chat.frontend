@@ -114,11 +114,13 @@ const Kontak = ({ onSelectContact }) => {
                         <div className=' flex xl:h-[100vh]'>
                         <div className='flex flex-col justify-between'>
                             <div className=''>
-                            <div className="logo flex justify-start xl:my-4">
-                                <div className="img flex">
-                                    <img src={photos.logo} alt="" className='self-center xl:w-8 mr-3'/>
+                            <div className="logo xl:my-4">
+                                <div className="flex">
+                                    <div className="img flex">
+                                        <img src={photos.logo} alt="" className='self-center xl:w-8 mr-3'/>
+                                    </div>
+                                    <h1 className='xl:font-semibold xl:text-4xl'>Sent</h1>
                                 </div>
-                                <h1 className='xl:font-semibold xl:text-4xl'>Sent</h1>
                             </div>
                             <div className='flex justify-center mt-10'>
                                 <button className="xl:w-[7vw]">
@@ -149,7 +151,7 @@ const Kontak = ({ onSelectContact }) => {
                             <div className='flex justify-center mb-5'>
                                 <button className="xl:w-[7vw]">
                                 <div className='flex pl-1'>
-                                    <img src={photos.broadcast} alt="" className='xl:h-[25px] self-center mr-2'/>
+                                    <img src={photos.setting} alt="" className='xl:h-[25px] self-center mr-2'/>
                                     <h1 className='xl:text-2xl self-center font-semibold'>Setting</h1>
                                 </div>
                                 </button>
