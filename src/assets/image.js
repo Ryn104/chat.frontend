@@ -16,6 +16,7 @@ import google from './image/google.png'
 import privates from './image/private.png'
 import group from './image/group.png'
 import broadcast from './image/broadcast.png'
+import setting from './image/setting.png'
 // Tambahkan impor lainnya di sini
 
 const photos = {
@@ -37,6 +38,7 @@ const photos = {
   privates,
   group,
   broadcast,
+  setting,
 
 };
 

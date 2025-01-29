@@ -170,7 +170,7 @@ const Chat = () => {
             </div>
 
             {/* Input Chat */}
-            <div className="input-chat px-5 fixed xl:w-[74%]">
+            <div className="input-chat px-5 fixed xl:w-[82%]">
                 <form
                     onSubmit={submit}
                     className="input input-bordered flex items-center gap-2 w-full h-[45px]"

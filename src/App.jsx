@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className='main'>
-        <SideBar/>
+        {/* <SideBar/> */}
         <Kontak onSelectContact={setSelectedContact} />
         <Chat contactId={selectedContact} chatData={chatData} />
     </div>
