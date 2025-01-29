@@ -5,7 +5,7 @@ import photos from "../assets/image.js";
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
-    const [username, setUsername] = useState("Nun"); // Nama pengirim saat ini
+    const [username, setUsername] = useState(""); // Nama pengirim saat ini
 
     const token = localStorage.getItem("authToken");
     const receiverId = localStorage.getItem("receiverId");
@@ -21,7 +21,7 @@ const Chat = () => {
         const fetchChatData = async () => {
             try {
                 const response = await fetch(
-                    `http://api-chat.itclub5.my.id/api/chat/${receiverId}`,
+                    `http://127.0.0.1:8000/api/chat/${receiverId}`,
                     {
                         method: "GET",
                         headers: {
@@ -74,8 +74,9 @@ const Chat = () => {
         };
 
         try {
+            
             const response = await fetch(
-                "http://api-chat.itclub5.my.id/api/chat/",
+                "http://127.0.0.1:8000/api/chat/",
                 {
                     method: "POST",
                     headers: {
@@ -86,13 +87,19 @@ const Chat = () => {
                 }
             );
 
+            
+            
             if (response.ok) {
+                const sname = await response.json(); // Get the response data
+                
+                setUsername(sname.sender_name);
+
                 console.log("Pesan berhasil dikirim!");
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     {
                         sender_id: parseInt(localStorage.getItem("userId")),
-                        sender_name: username,
+                        sender_name: sname.sender_name,
                         receiver_id: parseInt(receiverId),
                         receiver_name: receiverName,
                         message_text: message,
