@@ -21,7 +21,7 @@ const Chat = () => {
         const fetchChatData = async () => {
             try {
                 const response = await fetch(
-                    `http://127.0.0.1:8000/api/chat/${receiverId}`,
+                    `http://api-chat.itclub5.my.id/api/chat/${receiverId}`,
                     {
                         method: "GET",
                         headers: {
@@ -76,7 +76,7 @@ const Chat = () => {
         try {
             
             const response = await fetch(
-                "http://127.0.0.1:8000/api/chat/",
+                "http://api-chat.itclub5.my.id/api/chat/",
                 {
                     method: "POST",
                     headers: {

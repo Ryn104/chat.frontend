@@ -14,7 +14,7 @@ const GroupChat = ({ groupId }) => {
 
         const fetchGroupMessages = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/group/${groupId}`, {
+                const response = await fetch(`http://api-chat.itclub5.my.id/api/group/${groupId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -55,7 +55,7 @@ const GroupChat = ({ groupId }) => {
         };
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/group/message", {
+            const response = await fetch("http://api-chat.itclub5.my.id/api/group/message", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

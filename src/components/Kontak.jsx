@@ -15,8 +15,8 @@ const Kontak = ({ onSelectContact }) => {
     const fetchContacts = async () => {
       try {
         const url = isGroup
-          ? "http://127.0.0.1:8000/api/group-contacts" // API untuk grup
-          : "http://127.0.0.1:8000/api/contact"; // API untuk kontak pribadi
+          ? "http://api-chat.itclub5.my.id/api/group-contacts" // API untuk grup
+          : "http://api-chat.itclub5.my.id/api/contact"; // API untuk kontak pribadi
 
         const response = await fetch(url, {
           method: "GET",

@@ -20,7 +20,7 @@ const Reg = () => {
         setError('');
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/register', {
+            const response = await fetch('http://api-chat.itclub5.my.id/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
