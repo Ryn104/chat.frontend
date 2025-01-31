@@ -18,6 +18,9 @@ import group from './image/group.png'
 import broadcast from './image/broadcast.png'
 import setting from './image/setting.png'
 import burger from './image/burger.png'
+import adduser from './image/user-add.png' 
+import addgroup from './image/group-add.png'
+
 // Tambahkan impor lainnya di sini
 
 const photos = {
@@ -41,6 +44,8 @@ const photos = {
   broadcast,
   setting,
   burger,
+  adduser,
+  addgroup
 
 };
 

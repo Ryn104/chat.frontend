@@ -12,7 +12,6 @@ const GroupChat = ({ groupId }) => {
     useEffect(() => {
         if (!groupId) return;
 
-        // Fetch group chat data when the component is mounted
         const fetchGroupMessages = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:8000/api/group/${groupId}`, {
@@ -34,7 +33,6 @@ const GroupChat = ({ groupId }) => {
 
         fetchGroupMessages();
 
-        // Set up Pusher for real-time messaging
         const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
         const channel = pusher.subscribe(`group-chat-${groupId}`);
         channel.bind("message-sent", (data) => {
