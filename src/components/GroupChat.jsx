@@ -4,7 +4,7 @@ import Pusher from "pusher-js";
 const GroupChat = () => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
-    const [groupId, setGroupId] = useState(localStorage.getItem("groupId"));
+    const [groupId, setGroupId] = useState(localStorage.getItem("GroupId"));
     const [groupName, setGroupName] = useState(localStorage.getItem("groupName") || "Unknown");
     const token = localStorage.getItem("authToken");
 
@@ -109,7 +109,7 @@ const GroupChat = () => {
                         messages.map((message, index) => (
                             <div key={index} className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId")) ? "chat-end" : "chat-start"}`}>
                                 <div className="chat-bubble max-w-[52%]">
-                                    <strong>{message.sender_name}</strong>
+                                    <strong>{message.sender.name}</strong>
                                     <p>{message.message_text}</p>
                                 </div>
                                 <div className="chat-footer opacity-50">
