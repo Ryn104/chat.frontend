@@ -101,6 +101,9 @@ const GroupChat = () => {
                 <div className="header w-full h-[10%] flex border-b border-gray-700">
                     <div className="kontak flex py-3 px-9 justify-between w-full">
                         <h1 className="font-semibold text-2xl">{GroupName}</h1>
+                        <div>
+                        <p className="font-semibold text-2xl">{GroupMembers}</p>
+                        </div>
                     </div>
                 </div>
 
@@ -109,7 +112,7 @@ const GroupChat = () => {
                         messages.map((message, index) => (
                             <div key={index} className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId")) ? "chat-end" : "chat-start"}`}>
                                 <div className="chat-bubble max-w-[52%]">
-                                    <strong>{message.sender.name}</strong>
+                                    <strong>{message.sender_name}</strong>
                                     <p>{message.message_text}</p>
                                 </div>
                                 <div className="chat-footer opacity-50">
