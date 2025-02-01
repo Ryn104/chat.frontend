@@ -11,13 +11,14 @@ const Chat = () => {
     const receiverId = localStorage.getItem("receiverId");
     const receiverName = localStorage.getItem("receiverName") || "Unknown";
     const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
-
+    const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
+    
     useEffect(() => {
         if (!receiverId) {
-            alert("Pilih kontak terlebih dahulu!");
+            setMessages([]); // Kosongkan chat jika tidak ada kontak yang dipilih
             return;
         }
-
+    
         const fetchChatData = async () => {
             try {
                 const response = await fetch(
@@ -29,12 +30,9 @@ const Chat = () => {
                         },
                     }
                 );
-
+    
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("Data dari API:", data);
-
-                    // Langsung simpan data pesan ke state
                     setMessages(data);
                 } else {
                     console.error("Gagal mengambil data chat:", response.status);
@@ -43,29 +41,32 @@ const Chat = () => {
                 console.error("Terjadi kesalahan saat mengambil data:", error);
             }
         };
-
+    
         fetchChatData();
-    }, [token, receiverId]);
+    }, [receiverId]); // Pastikan chat berubah ketika kontak berubah
+    
 
     useEffect(() => {
         const pusher = new Pusher("6cdc86054a25f0168d17", {
             cluster: "ap1",
         });
-
+    
         const channel = pusher.subscribe("chat-channel");
-        channel.bind("message-sent", (data) => {
+    
+        const handleNewMessage = (data) => {
             setMessages((prevMessages) => [...prevMessages, data]);
-        });
-
+        };
+    
+        channel.bind("message-sent", handleNewMessage);
+    
         return () => {
-            channel.unbind_all();
+            channel.unbind("message-sent", handleNewMessage); // Hapus listener sebelum unmount
             channel.unsubscribe();
         };
     }, []);
 
     const submit = async (e) => {
         e.preventDefault();
-
         if (!message.trim()) return;
 
         const newMessage = {
@@ -126,7 +127,7 @@ const Chat = () => {
                         <div className="flex items-center">
                             <img
                                 className="w-[3.3vw] rounded-full"
-                                src={photos[receiverId]}
+                                src={receiverImg}
                                 alt="profile"
                                 onError={(e) => (e.target.src = "fallback-image-url")}
                             />
@@ -170,7 +171,7 @@ const Chat = () => {
             </div>
 
             {/* Input Chat */}
-            <div className="input-chat px-5 fixed xl:w-[82%]">
+            <div className="input-chat px-5 fixed xl:w-[74vw]">
                 <form
                     onSubmit={submit}
                     className="input input-bordered flex items-center gap-2 w-full h-[45px]"

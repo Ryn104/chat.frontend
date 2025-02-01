@@ -36,7 +36,7 @@ const Log = () => {
                 localStorage.setItem('authToken', data.token); // Simpan token
             }
     
-            navigate('/'); // Navigasi ke halaman utama
+            navigate('/private'); // Navigasi ke halaman utama
         } catch (err) {
             if (err.name === 'TypeError') {
                 setError('Failed to connect to the server. Please check your network.');

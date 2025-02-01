@@ -1,33 +1,24 @@
 import { useState } from 'react';
 import './App.css';
-import Kontak from './components/Kontak';
-import Chat from './components/Chat';
-import GroupChat from './components/GroupChat'; // Import GroupChat component
-import chatData from './assets/chatData';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import Log from './page/login.jsx'
+import Reg from './page/register.jsx'
+import Private from './page/private.jsx'
+import Group from './page/group.jsx'
 
-function App() {
-  const [selectedContact, setSelectedContact] = useState(null);  // Store selected contact or group
-  const [chatType, setChatType] = useState('private');  // Either 'private' or 'group'
-
-  const onSelectContact = (contact) => {
-    if (contact === 'group') {
-      setChatType('group');
-      setSelectedContact(null); // Group chat has no single selected contact
-    } else {
-      setChatType('private');
-      setSelectedContact(contact);
-    }
-  };
-
+const App = () => {
   return (
-    <div className='main'>
-      <Kontak onSelectContact={onSelectContact} />
-      {chatType === 'private' ? (
-        <Chat contactId={selectedContact} chatData={chatData} />
-      ) : (
-        <GroupChat groupId="123" />  // Replace with actual group ID
-      )}
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route path='/' element={<App />} />
+          <Route path='/login' element={<Log />} />
+          <Route path='/register' element={<Reg />} />
+          <Route path='/private' element={<Private />} />
+          <Route path='/group' element={<Group />} />
+        </Routes>
+    </Router>
+    </>
   );
 }
 
