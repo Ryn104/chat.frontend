@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
+import photos from "../assets/image.js";
 
 const GroupChat = () => {
     const [messages, setMessages] = useState([]);
@@ -11,8 +12,21 @@ const GroupChat = () => {
     const GroupId = localStorage.getItem("GroupId");
     const GroupName = localStorage.getItem("GroupName") || "Unknown";
     const GroupDescription = localStorage.getItem("GroupDescription") || "Unknown";
-    const GroupMembers = localStorage.getItem("GroupMembers") || "Unknown";
+
+    // let GroupMembers = [];
+    // try {
+    //     const membersData = localStorage.getItem("GroupMembers");
+    //     GroupMembers = membersData ? JSON.parse(membersData) : []; 
+        
+    //     if (!Array.isArray(GroupMembers)) {
+    //         GroupMembers = []; // Pastikan hasilnya array
+    //     }
+    // } catch (error) {
+    //     console.error("Error parsing GroupMembers:", error);
+    //     GroupMembers = [];
+    // }
     
+
     useEffect(() => {
         if (!groupId) {
             setMessages([]);
@@ -99,11 +113,18 @@ const GroupChat = () => {
         <div className="flex h-[110vh]">
             <div className="w-full flex-col justify-between">
                 <div className="header w-full h-[10%] flex border-b border-gray-700">
-                    <div className="kontak flex py-3 px-9 justify-between w-full">
-                        <h1 className="font-semibold text-2xl">{GroupName}</h1>
-                        <div>
-                        <p className="font-semibold text-2xl">{GroupMembers}</p>
+                    <div className="kontak flex ml-8 py-8 gap-5 w-full">
+                        <div className="flex items-center">
+                            <img
+                                className="w-[3.3vw] rounded-full"
+                                src={photos.Riyan}
+                                alt="profile"
+                            />
                         </div>
+                        <h1 className="font-semibold text-2xl">{GroupName}</h1>
+                        {/* <h1 className="font-semibold text-2xl">{GroupMembers.length > 0
+                            ? GroupMembers.map(member => member.name).join(", ")
+                            : "No members"}</h1> */}
                     </div>
                 </div>
 

@@ -16,13 +16,19 @@ const App = () => {
   return (
     <div className="main">
       <div className="flex">
-        <Sidebar />
-        <GroupKontak onSelectGroup={handleSelectGroup} />
+        <span className="z-40">
+            <Sidebar />
+        </span>
+        <span>
+            <GroupKontak onSelectGroup={handleSelectGroup} />
+        </span>
         <div className="xl:w-[73.9vw]">
           {selectedGroupId ? (
             <GroupChat key={selectedGroupId} groupId={selectedGroupId} groupName={selectedGroupName} />
           ) : (
-            <p>Pilih grup untuk mulai chat</p>
+            <div className='flex justify-center mt-[48vh]'>
+                <p className='text-3xl'>Select a group to start a chat</p>
+            </div>
           )}
         </div>
       </div>

@@ -97,10 +97,10 @@ const Kontak = ({ onSelectContact }) => {
               {highlightText(name, searchQuery)}
             </div>
             <div className="text-gray-400 text-sm text-start">
-              Divisi: {highlightText(divisi, searchQuery)}
+              Division: {highlightText(divisi, searchQuery)}
             </div>
             <div className="text-gray-400 text-sm text-start">
-              Kelas: {highlightText(kelas, searchQuery)}
+              Class: {highlightText(kelas, searchQuery)}
             </div>
             <div className="text-gray-500 text-xs text-start">
               Last Online: {last_online}

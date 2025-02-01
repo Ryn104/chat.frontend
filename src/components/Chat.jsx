@@ -171,7 +171,7 @@ const Chat = () => {
             </div>
 
             {/* Input Chat */}
-            <div className="input-chat px-5 fixed xl:w-[74vw]">
+            <div className="input-chat px-4 fixed xl:w-[74vw]">
                 <form
                     onSubmit={submit}
                     className="input input-bordered flex items-center gap-2 w-full h-[45px]"
@@ -183,8 +183,8 @@ const Chat = () => {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                     />
-                    <button type="submit" className="btn btn-primary">
-                        Kirim
+                    <button type="submit" className="">
+                        <img src={photos.logo} alt="" className="w-10"/>
                     </button>
                 </form>
             </div>
