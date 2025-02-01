@@ -61,6 +61,7 @@ const GroupKontak = ({ onSelectGroup }) => {
     name,
     description,
     members,
+    img,
   }) => (
     <tr
       key={group_id} // Sesuaikan key untuk kontak pribadi atau grup
@@ -70,6 +71,7 @@ const GroupKontak = ({ onSelectGroup }) => {
         localStorage.setItem("GroupName", name); // Simpan Nama ke loca  lStorage
         localStorage.setItem("GroupDescription", description); // Simpan Divisi ke localStorage
         localStorage.setItem("GroupMembers", members); // Simpan Divisi ke localStorage
+        localStorage.setItem("GroupImg", img); // Simpan Divisi ke localStorage
         onSelectGroup(group_id); // Panggil callback untuk tindakan lainnya
       }}
     >
@@ -78,7 +80,7 @@ const GroupKontak = ({ onSelectGroup }) => {
           <div className="avatar">
             <div className="rounded-full border border-gray-900 h-20 w-20">
               <img
-                src={photos.Riyan} // Gunakan gambar default jika avatar null
+                src={img} // Gunakan gambar default jika avatar null
                 alt={name}
               />
             </div>
@@ -104,7 +106,21 @@ const GroupKontak = ({ onSelectGroup }) => {
 
   return (
     <div className="w-[22vw] border-gray-700 border-r">
-      <h1 className="text-3xl font-semibold py-8 mx-5">Group Chat</h1>
+      <div className="flex">
+        <div className="self-center xl:ml-6">
+          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            {/* Page content here */}
+            <label htmlFor="my-drawer" className="drawer-button">
+              <img src={photos.logo} alt="" className="xl:w-10" />
+            </label>
+          </div>
+          </div>
+        <h1 className="text-3xl font-semibold py-8 mx-5">
+          Group Chat
+        </h1>
+        {/* Teks berubah */}
+      </div>
       <div className="flex justify-center px-5">
         <input
           type="text"

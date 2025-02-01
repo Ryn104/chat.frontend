@@ -86,7 +86,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             <h1 className="xl:font-semibold xl:text-4xl">Sent</h1>
                           </div>
                         </div>
-                        <div className="flex justify-center mt-8">
+                        <div className="flex justify-center mt-10">
                           <button
                             className="xl:w-[7vw]"
                             onClick={() => navigate('/private')} // Set ke Private
@@ -103,7 +103,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
-                        <div className="flex justify-center mt-8">
+                        <div className="flex justify-center mt-10">
                           <button
                             className="xl:w-[7vw]"
                             onClick={() => navigate('/group')}  // Set ke Group
@@ -120,7 +120,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
-                        <div className="flex justify-center mt-8">
+                        <div className="flex justify-center mt-10">
                           <button className="xl:w-[7vw]">
                             <div className="flex pl-1">
                               <img

@@ -12,6 +12,7 @@ const GroupChat = () => {
     const GroupId = localStorage.getItem("GroupId");
     const GroupName = localStorage.getItem("GroupName") || "Unknown";
     const GroupDescription = localStorage.getItem("GroupDescription") || "Unknown";
+    const GroupImg = localStorage.getItem("GroupImg") || "Unknown";
 
     // let GroupMembers = [];
     // try {
@@ -117,7 +118,7 @@ const GroupChat = () => {
                         <div className="flex items-center">
                             <img
                                 className="w-[3.3vw] rounded-full"
-                                src={photos.Riyan}
+                                src={GroupImg}
                                 alt="profile"
                             />
                         </div>
@@ -156,7 +157,9 @@ const GroupChat = () => {
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                         />
-                        <button type="submit" className="btn btn-primary">Kirim</button>
+                        <button type="submit" className="">
+                            <img src={photos.logo} alt="" className="w-10"/>
+                        </button>
                     </form>
                 </div>
             </div>
