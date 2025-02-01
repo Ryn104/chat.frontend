@@ -1,9 +1,36 @@
-import React from 'react';
 import photos from "../assets/image.js";
 import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 const SideBar = ({ collapsed, toggleCollapsed }) => {
   const navigate = useNavigate()
+  const token = localStorage.getItem("authToken");
+  const [userName, setUserName] = useState("Loading...");
+
+    useEffect(() => {
+      const fetchGroups = async () => {
+        try {
+          const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+  
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  
+          const data = await response.json();
+          setUserName(data.name); // Simpan nama dari API ke dalam state
+        } catch (err) {
+          setUserName("Unknown")
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchGroups();
+    }, [token]);
+
+    
 
   return (
     <div className='border-r border-gray-700'>
@@ -114,7 +141,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                                 className="xl:h-[50px] rounded-full self-center mr-2"
                               />
                               <h1 className="xl:text-2xl self-center font-semibold">
-                                Nurkalam
+                              {userName}
                               </h1>
                             </div>
                           </button>
