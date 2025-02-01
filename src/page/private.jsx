@@ -20,7 +20,10 @@ const App = () => {
           {selectedContact ? (
             <Chat key={selectedContact} contactId={selectedContact} />
           ) : (
-            <p>Pilih kontak untuk mulai chat</p>
+            <div className='flex justify-center mt-[48vh]'>
+                <p className='text-3xl'>Select a Contact to Start a Chat</p>
+            </div>
+
           )}
         </div>
       </div>

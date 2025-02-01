@@ -88,10 +88,10 @@ const GroupKontak = ({ onSelectGroup }) => {
               {highlightText(name, searchQuery)}
             </div>
             <div className="text-gray-400 text-sm text-start">
-              Divisi: {highlightText(description, searchQuery)}
+              Division: {highlightText(description, searchQuery)}
             </div>
             <div className="text-gray-400 text-sm text-start">
-              Kelas: {highlightText(members.name, searchQuery)}
+              Class: {highlightText(members.name, searchQuery)}
             </div>
           </div>
         </div>
@@ -108,12 +108,23 @@ const GroupKontak = ({ onSelectGroup }) => {
       <div className="flex justify-center px-5">
         <input
           type="text"
-          className="input input-bordered w-full"
+          className="input input-bordered w-full mr-3"
           placeholder="Search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+                <button
+          className="btn"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
+          <img
+            src={photos.addgroup}
+            className="xl:w-5"
+            onClick={() => setIsGroup(false)}
+          />
+        </button>
       </div>
+      
       <div className="overflow-x-hidden mt-8 h-[85vh]">
         <table className="table">
           <tbody>{filteredGroups.map(renderRow)}</tbody>
