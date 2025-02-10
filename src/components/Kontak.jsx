@@ -149,7 +149,7 @@ const Kontak = ({ onSelectContact }) => {
         >
           <img
             src={photos.adduser}
-            className="xl:w-5"
+            className="w-10 xl:w-5"
             onClick={() => setIsGroup(false)}
           />
         </button>

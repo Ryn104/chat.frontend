@@ -60,7 +60,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
               <div className="drawer-content">
                 {/* Page content here */}
                 <label htmlFor="my-drawer" className="drawer-button">
-                  <img src={photos.burger} alt="" className="xl:w-12 z-10" />
+                  <img src={photos.burger} alt="" className="w-20 xl:w-12 z-10" />
                 </label>
               </div>
               <div className="drawer-side">
@@ -179,7 +179,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.privates}
                     alt=""
-                    className="xl:h-[30px] self-center"
+                    className="w-10 xl:h-[30px] self-center"
                   />
                 </div>
               </button>
@@ -193,7 +193,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.group}
                     alt=""
-                    className="xl:h-[30px] self-center"
+                    className="w-10 xl:h-[30px] self-center"
                   />
                 </div>
               </button>
@@ -204,7 +204,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.broadcast}
                     alt=""
-                    className="xl:h-[30px] self-center"
+                    className="w-10 xl:h-[30px] self-center"
                   />
                 </div>
               </button>
@@ -217,7 +217,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.setting}
                     alt=""
-                    className="xl:h-[30px] self-center"
+                    className="w-10 xl:h-[30px] self-center"
                   />
                 </div>
               </button>
@@ -333,7 +333,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={userImg}
                     alt=""
-                    className="xl:h-[50px] rounded-full self-center"
+                    className="w-10 xl:h-[50px] rounded-full self-center"
                   />
                 </div>
               </button>
