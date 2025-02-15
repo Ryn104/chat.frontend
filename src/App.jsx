@@ -5,6 +5,7 @@ import Log from './page/login.jsx'
 import Reg from './page/register.jsx'
 import Private from './page/private.jsx'
 import Group from './page/group.jsx'
+import User from './page/user.jsx'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path='/register' element={<Reg />} />
           <Route path='/private' element={<Private />} />
           <Route path='/group' element={<Group />} />
+          <Route path='/user' element={<User />} />
         </Routes>
     </Router>
     </>
