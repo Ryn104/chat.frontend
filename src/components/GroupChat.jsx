@@ -26,6 +26,31 @@ const GroupChat = () => {
     //     console.error("Error parsing GroupMembers:", error);
     //     GroupMembers = [];
     // }
+
+    const fetchUserData = async () => {
+        try {
+          const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+  
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem("userId", data.id); // Simpan userId
+          } else {
+            console.error("Gagal mengambil data user:", response.status);
+          }
+        } catch (error) {
+          console.error("Terjadi kesalahan saat mengambil data user:", error);
+        }
+      };
+  
+      // Panggil fungsi ini setelah login
+      fetchUserData();
+  
+      const userId = localStorage.getItem("userId");
     
 
     useEffect(() => {
@@ -110,6 +135,76 @@ const GroupChat = () => {
         }
     };
 
+    const handleEdit = async (messageId, newText) => {
+        if (!newText.trim()) return;
+    
+        try {
+            const response = await fetch(
+                `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ message_text: newText }),
+                }
+            );
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Pesan berhasil diedit:", data);
+    
+                // **Perbarui pesan di state tanpa perlu refresh**
+                setMessages((prevMessages) =>
+                    prevMessages.map((msg) =>
+                        msg.id === messageId ? { ...msg, message_text: newText } : msg
+                    )
+                );
+            } else {
+                console.error("Gagal mengedit pesan:", response.status);
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan saat mengedit pesan:", error);
+        }
+    };
+    
+    
+    const handleDelete = async (messageId) => {
+        console.log("Deleting message ID:", messageId); // Debugging
+    
+        if (!messageId) {
+            console.error("Message ID is undefined!");
+            return;
+        }
+    
+        try {
+            const response = await fetch(
+                `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+    
+            if (response.ok) {
+                console.log("Pesan berhasil dihapus:", messageId);
+                
+                // **Hapus pesan dari state langsung tanpa perlu refresh**
+                setMessages((prevMessages) =>
+                    prevMessages.filter((msg) => msg.id !== messageId)
+                );
+            } else {
+                console.error("Gagal menghapus pesan:", response.status);
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan saat menghapus pesan:", error);
+        }
+    };
+    
+
     return (
         <div className="flex h-[110vh]">
             <div className="w-full flex-col justify-between">
@@ -141,6 +236,36 @@ const GroupChat = () => {
                                     <p>{message.date}</p>
                                     <p>{message.time}</p>
                                 </div>
+                                {message.sender_id ===
+                parseInt(localStorage.getItem("userId")) && (
+                <div className="opacity-100">
+                  <p
+                    className="cursor-pointer text-blue-500"
+                    onClick={() => {
+                      const newText = prompt(
+                        "Edit pesan:",
+                        message.message_text
+                      );
+                      if (newText !== null) {
+                        handleEdit(message.id, newText);
+                      }
+                    }}
+                  >
+                    Edit
+                  </p>
+                  <p
+                    className="cursor-pointer text-red-500"
+                    onClick={() => handleDelete(message.id)}
+                  >
+                    Delete
+                  </p>
+                  {message.is_read ? (
+                    <p className="text-green-500">Seen</p>
+                  ) : (
+                    <p className="text-red-500">Unseen</p>
+                  )}
+                </div>
+              )}
                             </div>
                         ))
                     ) : (
