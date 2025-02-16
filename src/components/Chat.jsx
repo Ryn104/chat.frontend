@@ -205,6 +205,31 @@ const Chat = () => {
     }
   };
 
+  const markAsRead = async () => {
+    try {
+      const response = await fetch(
+        "http://api-chat.itclub5.my.id/api/chat/messages/mark-as-read",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ receiver_id: receiverId }),
+        }
+      );
+  
+      if (response.ok) {
+        console.log("Pesan berhasil ditandai sebagai dibaca");
+      } else {
+        console.error("Gagal menandai pesan sebagai dibaca:", response.status);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat menandai pesan:", error);
+    }
+  };
+  
+
   return (
     <div className="w-full flex-col justify-between h-[110vh]">
       {/* Header */}

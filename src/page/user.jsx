@@ -5,7 +5,7 @@ const User = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", divisi: "", kelas: "", image: null });
+  const [formData, setFormData] = useState({ name: "", email: "", divisi: "", kelas: "", img: null });
 
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");// Ganti dengan token yang sesuai
@@ -23,7 +23,7 @@ const User = () => {
       })
       .then((data) => {
         setUser(data);
-        setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, image: null });
+        setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: null });
         setLoading(false);
       })
       .catch((err) => {
@@ -37,7 +37,7 @@ const User = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, image: e.target.files[0] });
+    setFormData({ ...formData, img: e.target.files[0] });
   };
 
   const handleSubmit = (e) => {
@@ -45,12 +45,12 @@ const User = () => {
     const authToken = localStorage.getItem("authToken");
     const formDataToSend = new FormData();
     
-    formDataToSend.append("nama", formData.name);
+    formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("divisi", formData.divisi);
     formDataToSend.append("kelas", formData.kelas);
-    if (formData.image) {
-      formDataToSend.append("image", formData.image);
+    if (formData.img) {
+      formDataToSend.append("img", formData.img);
     }
 
     formDataToSend.append("_method", "PUT");
@@ -109,7 +109,7 @@ const User = () => {
           />
           <input
             type="file"
-            name="image"
+            name="img"
             onChange={handleFileChange}
             className="w-full p-2 border rounded"
           />
@@ -125,7 +125,6 @@ const User = () => {
             className="w-24 h-24 rounded-full mx-auto"
           />
           <h2 className="text-xl font-bold text-center">{user.name}</h2>
-          <p className="text-gray-600 text-center">Role: {user.role}</p>
           <p className="text-gray-600 text-center">Email: {user.email}</p>
           <p className="text-gray-600 text-center">Kelas: {user.kelas}</p>
           <p className="text-gray-600 text-center">Divisi: {user.divisi}</p>
