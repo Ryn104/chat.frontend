@@ -50,34 +50,34 @@ const Log = () => {
     
 
     return (
-        <div className="bg-base-200 min-h-screen">
-            <div className="flex justify-between xl:min-h-screen bg">
-                <div className="card w-full max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
+        <div className="bg-base-200 xl:min-h-screen">
+            <div className="xl:flex xl:justify-between xl:min-h-screen bg">
+                <div className="card w-full xl:max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
-                        <div className="grid place-content-center h-full">
-                            <div className="logo gap-5">
-                                <div className="xl:w-[5vw]">
+                        <div className="grid place-content-center h-[100vh] xl:h-full">
+                            <div className="logo gap-5 mb-10">
+                                <div className="xl:w-[5vw] w-20">
                                     <img src={photos.logo} alt="Logo" />
                                 </div>
-                                <h1 className="xl:text-[4vw] xl:font-bold text-gray-600">SENT</h1>
+                                <h1 className="text-[13vw] xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
                             </div>
                             {error && <div className="text-red-500">{error}</div>} {/* Tampilkan error jika ada */}
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Email</span>
+                                    <span className="label-text text-gray-800 font-semibold">Email</span>
                                 </label>
                                 <input
                                     type="email"
                                     placeholder="email"
-                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)} // Update state email
                                 />
                             </div>
-                            <div className="form-control">
+                            <div className="form-control mb-10">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Password</span>
+                                    <span className="label-text text-gray-800 font-semibold">Password</span>
                                 </label>
                                 <input
                                     type="password"
@@ -88,7 +88,7 @@ const Log = () => {
                                     onChange={(e) => setPassword(e.target.value)} // Update state password
                                 />
                                 <label className="label">
-                                    <a href="#" className="label-text text-gray-500 alt link link-hover">
+                                    <a href="#" className="label-text text-gray-800 alt link link-hover">
                                         Forgot password?
                                     </a>
                                 </label>
@@ -101,20 +101,11 @@ const Log = () => {
                                     {loading ? 'Logging in...' : 'Login'}
                                 </button>
                             </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">or continue with</span>
-                            <div className="flex justify-center gap-4">
-                                <div className="bg-gray-200 hover:bg-gray-100 px-11 py-4 w-max rounded-xl border-gray-300 border">
-                                    <img src={photos.google} alt="Google" className="xl:w-8" />
-                                </div>
-                                <div className="bg-gray-200 hover:bg-gray-100 px-11 py-4 w-max rounded-xl border-gray-300 border">
-                                    <img src={photos.github} alt="GitHub" className="xl:w-8" />
-                                </div>
-                            </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">
+                            <span className="label-text text-gray-800 text-center my-5 text-md">
                                 Don’t have an account yet?
                                 <a
                                     href="#"
-                                    className="text-gray-500 alt link link-hover"
+                                    className="text-gray-600 alt link link-hover font-semibold text-md"
                                     onClick={() => navigate('/register')} // Navigasi ke halaman register
                                 >
                                     {' '}
