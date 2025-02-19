@@ -81,27 +81,52 @@ const Reg = () => {
                                     <label className="label">
                                         <span className="label-text text-gray-500">Kelas</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Kelas"
-                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
-                                        required
-                                        value={kelas}
-                                        onChange={(e) => setKelas(e.target.value)}
-                                    />
+                                    <details className="dropdown">
+                                        <summary className="btn m-1 bg-gray-200 text-gray-500">{kelas || "Pilih Kelas"}</summary>
+                                        <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                            <details className="dropdown">
+                                                <summary className=" m-1 bg-gray-200 text-gray-500">{"TJKT"}</summary>
+                                                <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                    <li><a onClick={() => setKelas("X TJKT 1")}>X TJKT 1</a></li>
+                                                    <li><a onClick={() => setKelas("X TJKT 2")}>X TJKT 2</a></li>
+                                                    <li><a onClick={() => setKelas("X TJKT 3")}>X TJKT 3</a></li>
+                                                    <li><a onClick={() => setKelas("XI TJKT 1")}>XI TJKT 1</a></li>
+                                                    <li><a onClick={() => setKelas("XI TJKT 2")}>XI TJKT 2</a></li>
+                                                    <li><a onClick={() => setKelas("XI TJKT 3")}>XI TJKT 3</a></li>
+                                                    <li><a onClick={() => setKelas("XII TJKT 1")}>XII TJKT 1</a></li>
+                                                    <li><a onClick={() => setKelas("XII TJKT 2")}>XII TJKT 2</a></li>
+                                                    <li><a onClick={() => setKelas("XII TJKT 3")}>XII TJKT 3</a></li>
+                                                </ul>
+                                            </details>
+                                            <details className="dropdown">
+                                                <summary className=" m-1 bg-gray-200 text-gray-500">{"GEO"}</summary>
+                                                <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                    <li><a onClick={() => setKelas("X GEO 1")}>X GEO 1</a></li>
+                                                    <li><a onClick={() => setKelas("X GEO 2")}>X GEO 2</a></li>
+                                                    <li><a onClick={() => setKelas("X GEO 3")}>X GEO 3</a></li>
+                                                    <li><a onClick={() => setKelas("XI GEO 1")}>XI GEO 1</a></li>
+                                                    <li><a onClick={() => setKelas("XI GEO 2")}>XI GEO 2</a></li>
+                                                    <li><a onClick={() => setKelas("XI GEO 3")}>XI GEO 3</a></li>
+                                                    <li><a onClick={() => setKelas("XII GEO 1")}>XII GEO 1</a></li>
+                                                    <li><a onClick={() => setKelas("XII GEO 2")}>XII GEO 2</a></li>
+                                                    <li><a onClick={() => setKelas("XII GEO 3")}>XII GEO 3</a></li>
+                                                </ul>
+                                            </details>
+                                        </ul>
+                                    </details>
                                 </div>
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text text-gray-500">Divisi</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Divisi"
-                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
-                                        required
-                                        value={divisi}
-                                        onChange={(e) => setDivisi(e.target.value)}
-                                    />
+                                    <details className="dropdown">
+                                        <summary className="btn m-1 bg-gray-200 text-gray-500">{divisi || "Pilih Divisi"}</summary>
+                                        <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2">
+                                            <li><a onClick={() => setDivisi("Programming")}>Programming</a></li>
+                                            <li><a onClick={() => setDivisi("Design")}>Design</a></li>
+                                            <li><a onClick={() => setDivisi("Networking")}>Networking</a></li>
+                                        </ul>
+                                    </details>
                                 </div>
                             </div>
                             <div className="flex gap-4">
