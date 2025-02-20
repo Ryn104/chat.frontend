@@ -101,11 +101,11 @@ const Log = () => {
                                     {loading ? 'Logging in...' : 'Login'}
                                 </button>
                             </div>
-                            <span className="label-text text-gray-800 text-center my-5 text-md">
+                            <span className="label-text text-gray-800 text-center my-5 text-base w-[80vw]">
                                 Don’t have an account yet?
                                 <a
                                     href="#"
-                                    className="text-gray-600 alt link link-hover font-semibold text-md"
+                                    className="text-gray-600 alt link link-hover font-semibold text-base"
                                     onClick={() => navigate('/register')} // Navigasi ke halaman register
                                 >
                                     {' '}

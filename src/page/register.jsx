@@ -53,40 +53,42 @@ const Reg = () => {
     };
 
     return (
-        <div className="bg-base-200 min-h-screen">
-            <div className="flex justify-between xl:min-h-screen bg">
-                <div className="card w-full max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
+        <div className="bg-base-200 xl:min-h-screen">
+            <div className="xl:flex xl:justify-between xl:min-h-screen bg">
+                <div className="card w-full xl:max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
-                        <div className="grid place-content-center h-full">
-                            <div className="logo gap-5">
-                                <div className="xl:w-[5vw]"><img src={photos.logo} alt="" /></div>
-                                <h1 className="xl:text-[4vw] xl:font-bold text-gray-600">SENT</h1>
+                        <div className="grid place-content-center h-[100vh] xl:h-full">
+                            <div className="logo gap-5 mb-10 mt-[-18vw]">
+                                <div className="xl:w-[5vw] w-20">
+                                    <img src={photos.logo} alt="Logo" />
+                                </div>
+                                <h1 className="text-[13vw] xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
                             </div>
-                            {error && <div className="text-red-500">{error}</div>}
+                            {error && <div className="text-red-500">{error}</div>} {/* Tampilkan error jika ada */}
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Name</span>
+                                    <span className="label-text text-gray-800 font-semibold">Name</span>
                                 </label>
                                 <input
-                                    type="text"
-                                    placeholder="Name"
-                                    className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    type="name"
+                                    placeholder="name"
+                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                     required
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => setName(e.target.value)} // Update state email
                                 />
                             </div>
-                            <div className="flex gap-4">
-                                <div className="form-control">
+                            <div className="flex gap-4 w-[100%]]">
+                                <div className="form-control w-[100%]">
                                     <label className="label">
-                                        <span className="label-text text-gray-500">Kelas</span>
+                                        <span className="label-text text-gray-800 font-semibold">Kelas</span>
                                     </label>
                                     <details className="dropdown">
-                                        <summary className="btn m-1 bg-gray-200 text-gray-500">{kelas || "Pilih Kelas"}</summary>
-                                        <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                        <summary className="btn input border border-gray-300 w-[100%] xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{kelas || "Pilih Kelas"}</summary>
+                                        <ul className="menu dropdown-content bg-gray-200 rounded-xl z-[1] shadow xl:w-[14vw]">
                                             <details className="dropdown">
-                                                <summary className=" m-1 bg-gray-200 text-gray-500">{"TJKT"}</summary>
-                                                <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"TJKT"}</summary>
+                                                <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
                                                     <li><a onClick={() => setKelas("X TJKT 1")}>X TJKT 1</a></li>
                                                     <li><a onClick={() => setKelas("X TJKT 2")}>X TJKT 2</a></li>
                                                     <li><a onClick={() => setKelas("X TJKT 3")}>X TJKT 3</a></li>
@@ -99,8 +101,8 @@ const Reg = () => {
                                                 </ul>
                                             </details>
                                             <details className="dropdown">
-                                                <summary className=" m-1 bg-gray-200 text-gray-500">{"GEO"}</summary>
-                                                <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"GEO"}</summary>
+                                                <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
                                                     <li><a onClick={() => setKelas("X GEO 1")}>X GEO 1</a></li>
                                                     <li><a onClick={() => setKelas("X GEO 2")}>X GEO 2</a></li>
                                                     <li><a onClick={() => setKelas("X GEO 3")}>X GEO 3</a></li>
@@ -115,29 +117,29 @@ const Reg = () => {
                                         </ul>
                                     </details>
                                 </div>
-                                <div className="form-control">
+                                <div className="form-control w-[100%]">
                                     <label className="label">
-                                        <span className="label-text text-gray-500">Divisi</span>
+                                        <span className="label-text text-gray-800 font-semibold">Divisi</span>
                                     </label>
                                     <details className="dropdown">
-                                        <summary className="btn m-1 bg-gray-200 text-gray-500">{divisi || "Pilih Divisi"}</summary>
-                                        <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2">
+                                        <summary className="btn input border border-gray-300 w-[100%] xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{divisi || "Pilih Divisi"}</summary>
+                                        <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1]">
                                             <li><a onClick={() => setDivisi("Programming")}>Programming</a></li>
-                                            <li><a onClick={() => setDivisi("Design")}>Design</a></li>
+                                            <li><a onClick={() => setDivisi("Multimedia")}>Multimedia</a></li>
                                             <li><a onClick={() => setDivisi("Networking")}>Networking</a></li>
                                         </ul>
                                     </details>
                                 </div>
                             </div>
-                            <div className="flex gap-4">
+                            <div className="xl:flex xl:gap-4">
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text text-gray-500">Email</span>
+                                        <span className="label-text text-gray-800 font-semibold">Email</span>
                                     </label>
                                     <input
                                         type="email"
                                         placeholder="Email"
-                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -145,12 +147,12 @@ const Reg = () => {
                                 </div>
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text text-gray-500">Password</span>
+                                        <span className="label-text text-gray-800 font-semibold">Password</span>
                                     </label>
                                     <input
                                         type="password"
                                         placeholder="Password"
-                                        className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                        className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -159,34 +161,25 @@ const Reg = () => {
                             </div>
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text text-gray-500">Confirm Password</span>
+                                    <span className="label-text text-gray-800 font-semibold">Confirm Password</span>
                                 </label>
                                 <input
                                     type="password"
                                     placeholder="Confirm Password"
-                                    className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
+                                    className="input input-bordered xl:w-[17vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                     required
                                     value={passwordConfirmation}
                                     onChange={(e) => setPasswordConfirmation(e.target.value)}
                                 />
                             </div>
-                            <div className="form-control mt-8">
-                                <button className="mx-auto btn bg-gray-600 input-bordered w-[50%]" disabled={loading}>
+                            <div className="form-control mt-14">
+                                <button className="mx-auto btn bg-gray-600 border border-gray-300 w-[50%]" disabled={loading}>
                                     {loading ? 'Registering...' : 'Register'}
                                 </button>
                             </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">or continue with</span>
-                            <div className="flex justify-center gap-4">
-                                <div className="bg-gray-200 hover:bg-gray-100 px-11 py-4 w-max rounded-xl border-gray-300 border">
-                                    <img src={photos.google} alt="" className="xl:w-8" />
-                                </div>
-                                <div className="bg-gray-200 hover:bg-gray-100 px-11 py-4 w-max rounded-xl border-gray-300 border">
-                                    <img src={photos.github} alt="" className="xl:w-8" />
-                                </div>
-                            </div>
-                            <span className="label-text text-gray-500 text-center my-5 text-lg">
+                            <span className="label-text text-gray-800 text-center my-5 text-base w-[80vw]">
                                 Already have an account?
-                                <a href="#" className="text-gray-500 alt link link-hover" onClick={() => navigate('/login')}> Login</a>
+                                <a href="#" className="text-gray-600 alt link link-hover font-semibold text-base" onClick={() => navigate('/login')}> Login</a>
                             </span>
                         </div>
                     </form>
