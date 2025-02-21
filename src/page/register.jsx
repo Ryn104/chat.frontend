@@ -55,7 +55,7 @@ const Reg = () => {
     return (
         <div className="bg-base-200 xl:min-h-screen">
             <div className="xl:flex xl:justify-between xl:min-h-screen bg">
-                <div className="card w-full xl:max-w-[48vw] backdrop-blur-md backdrop-brightness-100 rounded-none">
+                <div className="card w-full xl:max-w-[48vw] backdrop-blur-md backdrop-brightness-100 shadow-xl rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
                         <div className="grid place-content-center h-[100vh] xl:h-full">
                             <div className="logo gap-5 mb-8">
