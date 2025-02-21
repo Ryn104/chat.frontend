@@ -2,67 +2,23 @@ import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const GroupChat = () => {
+const BroadcastChat = () => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
-    const [groupId, setGroupId] = useState(localStorage.getItem("GroupId"));
-    const [groupName, setGroupName] = useState(localStorage.getItem("groupName") || "Unknown");
+    const [broadcastId, setBroadcastId] = useState(localStorage.getItem("BroadcastId"));
+    const [broadcastMessage, setBroadcastMessage] = useState(localStorage.getItem("BroadcastMessage") || "Unknown");
     const token = localStorage.getItem("authToken");
 
-    const GroupId = localStorage.getItem("GroupId");
-    const GroupName = localStorage.getItem("GroupName") || "Unknown";
-    const GroupDescription = localStorage.getItem("GroupDescription") || "Unknown";
-    const GroupImg = localStorage.getItem("GroupImg") || "Unknown";
-
-    // let GroupMembers = [];
-    // try {
-    //     const membersData = localStorage.getItem("GroupMembers");
-    //     GroupMembers = membersData ? JSON.parse(membersData) : []; 
-        
-    //     if (!Array.isArray(GroupMembers)) {
-    //         GroupMembers = []; // Pastikan hasilnya array
-    //     }
-    // } catch (error) {
-    //     console.error("Error parsing GroupMembers:", error);
-    //     GroupMembers = [];
-    // }
-
-    const fetchUserData = async () => {
-        try {
-          const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          });
-  
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("userId", data.id); // Simpan userId
-          } else {
-            console.error("Gagal mengambil data user:", response.status);
-          }
-        } catch (error) {
-          console.error("Terjadi kesalahan saat mengambil data user:", error);
-        }
-      };
-  
-      // Panggil fungsi ini setelah login
-      fetchUserData();
-  
-      const userId = localStorage.getItem("userId");
-    
-
     useEffect(() => {
-        if (!groupId) {
+        if (!broadcastId) {
             setMessages([]);
             return;
         }
 
-        const fetchGroupChat = async () => {
+        const fetchBroadcastMessages = async () => {
             try {
                 const response = await fetch(
-                    `http://api-chat.itclub5.my.id/api/chat/group/${GroupId}`,
+                    `http://api-chat.itclub5.my.id/api/chat/broadcast`,
                     {
                         method: "GET",
                         headers: {
@@ -74,29 +30,30 @@ const GroupChat = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setMessages(data);
+                    console.log("berhasil")
                 } else {
-                    console.error("Gagal mengambil data chat grup:", response.status);
+                    console.error("Gagal mengambil data chat broadcast:", response.status);
                 }
             } catch (error) {
                 console.error("Terjadi kesalahan saat mengambil data:", error);
             }
         };
 
-        fetchGroupChat();
-    }, [groupId]);
+        fetchBroadcastMessages();
+    }, [broadcastId]);
 
     useEffect(() => {
         const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
-        const channel = pusher.subscribe("group-chat-channel");
+        const channel = pusher.subscribe("broadcast-chat-channel");
 
         const handleNewMessage = (data) => {
             setMessages((prevMessages) => [...prevMessages, data]);
         };
 
-        channel.bind("group-message-sent", handleNewMessage);
+        channel.bind("broadcast-message-sent", handleNewMessage);
 
         return () => {
-            channel.unbind("group-message-sent", handleNewMessage);
+            channel.unbind("broadcast-message-sent", handleNewMessage);
             channel.unsubscribe();
         };
     }, []);
@@ -106,13 +63,13 @@ const GroupChat = () => {
         if (!message.trim()) return;
 
         const newMessage = {
-            group_id: groupId,
+            broadcast_id: broadcastId,
             message_text: message,
         };
 
         try {
             const response = await fetch(
-                "http://api-chat.itclub5.my.id/api/chat/group/message",
+                "http://api-chat.itclub5.my.id/api/chat/broadcast",
                 {
                     method: "POST",
                     headers: {
@@ -127,6 +84,7 @@ const GroupChat = () => {
                 const sentMessage = await response.json();
                 setMessages((prevMessages) => [...prevMessages, sentMessage]);
                 setMessage("");
+                localStorage.setItem("message_broadcast", newMessage.message_text)
             } else {
                 console.error("Gagal mengirim pesan:", response.status);
             }
@@ -135,141 +93,33 @@ const GroupChat = () => {
         }
     };
 
-    const handleEdit = async (messageId, newText) => {
-        if (!newText.trim()) return;
-    
-        try {
-            const response = await fetch(
-                `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ message_text: newText }),
-                }
-            );
-    
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Pesan berhasil diedit:", data);
-    
-                // **Perbarui pesan di state tanpa perlu refresh**
-                setMessages((prevMessages) =>
-                    prevMessages.map((msg) =>
-                        msg.id === messageId ? { ...msg, message_text: newText } : msg
-                    )
-                );
-            } else {
-                console.error("Gagal mengedit pesan:", response.status);
-            }
-        } catch (error) {
-            console.error("Terjadi kesalahan saat mengedit pesan:", error);
-        }
-    };
-    
-    
-    const handleDelete = async (messageId) => {
-        console.log("Deleting message ID:", messageId); // Debugging
-    
-        if (!messageId) {
-            console.error("Message ID is undefined!");
-            return;
-        }
-    
-        try {
-            const response = await fetch(
-                `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-    
-            if (response.ok) {
-                console.log("Pesan berhasil dihapus:", messageId);
-                
-                // **Hapus pesan dari state langsung tanpa perlu refresh**
-                setMessages((prevMessages) =>
-                    prevMessages.filter((msg) => msg.id !== messageId)
-                );
-            } else {
-                console.error("Gagal menghapus pesan:", response.status);
-            }
-        } catch (error) {
-            console.error("Terjadi kesalahan saat menghapus pesan:", error);
-        }
-    };
-    
-
     return (
         <div className="flex h-[110vh]">
             <div className="w-full flex-col justify-between">
                 <div className="header w-full h-[10%] flex border-b border-gray-700">
                     <div className="kontak flex ml-8 py-8 gap-5 w-full">
-                        <div className="flex items-center">
-                            <img
-                                className="w-[3.3vw] rounded-full"
-                                src={GroupImg}
-                                alt="profile"
-                            />
-                        </div>
-                        <h1 className="font-semibold text-2xl">{GroupName}</h1>
-                        {/* <h1 className="font-semibold text-2xl">{GroupMembers.length > 0
-                            ? GroupMembers.map(member => member.name).join(", ")
-                            : "No members"}</h1> */}
+                        <h1 className="font-semibold text-2xl">Broadcast Chat</h1>
                     </div>
                 </div>
+
+                
 
                 <div className="value-chat px-5 pt-8 h-[76%] overflow-y-auto">
                     {messages.length > 0 ? (
                         messages.map((message, index) => (
-                            <div key={index} className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId")) ? "chat-end" : "chat-start"}`}>
+                            <div key={index} className={`chat chat-start`}>
                                 <div className="chat-bubble max-w-[52%]">
-                                    <strong>{message.sender.name}</strong>
-                                    <p>{message.message_text}</p>
+                                    <p>{localStorage.getItem("message_broadcast")}</p>
                                 </div>
                                 <div className="chat-footer opacity-50">
-                                    <p>{message.date}</p>
-                                    <p>{message.time}</p>
+                                    <p>{new Date(message.created_at).toLocaleString()}</p>
                                 </div>
-                                {message.sender_id ===
-                parseInt(localStorage.getItem("userId")) && (
-                <div className="opacity-100">
-                  <p
-                    className="cursor-pointer text-blue-500"
-                    onClick={() => {
-                      const newText = prompt(
-                        "Edit pesan:",
-                        message.message_text
-                      );
-                      if (newText !== null) {
-                        handleEdit(message.id, newText);
-                      }
-                    }}
-                  >
-                    Edit
-                  </p>
-                  <p
-                    className="cursor-pointer text-red-500"
-                    onClick={() => handleDelete(message.id)}
-                  >
-                    Delete
-                  </p>
-                  {message.is_read ? (
-                    <p className="text-green-500">Seen</p>
-                  ) : (
-                    <p className="text-red-500">Unseen</p>
-                  )}
-                </div>
-              )}
                             </div>
                         ))
                     ) : (
-                        <p>No messages found</p>
+                        <div className="chat-bubble max-w-[52%]">
+                                    <p>{localStorage.getItem("message_broadcast")}</p>
+                        </div>
                     )}
                 </div>
 
@@ -292,4 +142,4 @@ const GroupChat = () => {
     );
 };
 
-export default GroupChat;
+export default BroadcastChat;
