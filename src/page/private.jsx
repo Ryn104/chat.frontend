@@ -13,17 +13,16 @@ const App = () => {
         <div className="z-40">
           <Sidebar />
         </div>
-        <div>
+        <div className={`${selectedContact ? 'hidden' : ''} xl:block`}>
           <Kontak onSelectContact={setSelectedContact} />
         </div>
-        <div className="xl:w-[73.9vw]">
-          {selectedContact ? (
-            <Chat key={selectedContact} contactId={selectedContact} />
-          ) : (
-            <div className='flex justify-center mt-[48vh]'>
-                <p className='text-3xl'>Select a Contact to Start a Chat</p>
-            </div>
-
+        <div className={`xl:w-[73.9vw] ${selectedContact ? '' : 'hidden'} xl:block`}>
+          {selectedContact && (
+            <Chat 
+            key={selectedContact} 
+            contactId={selectedContact} 
+            onBack={() => setSelectedContact(null)} 
+          />
           )}
         </div>
       </div>

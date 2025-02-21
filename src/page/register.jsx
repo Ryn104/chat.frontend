@@ -85,7 +85,7 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Kelas</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{kelas || "Pilih Kelas"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{kelas || "Pilih Kelas"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 rounded-xl z-[1] shadow xl:w-[14vw]">
                                                 <details className="dropdown">
                                                     <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"TJKT"}</summary>
@@ -123,7 +123,7 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Divisi</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{divisi || "Pilih Divisi"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{divisi || "Pilih Divisi"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1]">
                                                 <li><a onClick={() => setDivisi("Programming")}>Programming</a></li>
                                                 <li><a onClick={() => setDivisi("Multimedia")}>Multimedia</a></li>
@@ -132,7 +132,7 @@ const Reg = () => {
                                         </details>
                                     </div>
                                 </div>
-                                <div className="xl:flex xl:gap-8">
+                                <div className="xl:flex xl:gap-5">
                                     <div className="form-control">
                                         <label className="label">
                                             <span className="label-text text-gray-800 font-semibold">Email</span>
@@ -140,7 +140,7 @@ const Reg = () => {
                                         <input
                                             type="email"
                                             placeholder="Email"
-                                            className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                             required
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
@@ -153,7 +153,7 @@ const Reg = () => {
                                         <input
                                             type="password"
                                             placeholder="Password"
-                                            className="input input-bordered xl:w-[14vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
                                             required
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const Chat = () => {
+const Chat = ({ contactId, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState(""); // Nama pengirim saat ini
@@ -218,7 +218,7 @@ const Chat = () => {
           body: JSON.stringify({ receiver_id: receiverId }),
         }
       );
-  
+
       if (response.ok) {
         console.log("Pesan berhasil ditandai sebagai dibaca");
       } else {
@@ -228,25 +228,31 @@ const Chat = () => {
       console.error("Terjadi kesalahan saat menandai pesan:", error);
     }
   };
-  
+
 
   return (
-    <div className="w-full flex-col justify-between h-[110vh]">
+    <div className="xl:w-full flex-col justify-between xl:h-[110vh] h-[112vh] w-[85.7vw]">
       {/* Header */}
-      <div className="header w-full h-[10%] flex border-b border-gray-700">
-        <div className="kontak flex py-3 px-9 justify-between w-full">
+      <div className="header w-full xl:h-[10%] h-[8%] flex border-b border-gray-700">
+        <div className="kontak flex py-3 px-4 justify-between w-full">
           <div className="flex gap-3">
+          <button
+              className=""
+              onClick={() => onBack()}
+            >
+              <img src={photos.back} className="w-10" />
+            </button>
             <div className="flex items-center">
               <img
-                className="w-[3.3vw] rounded-full"
+                className="xl:w-[3.3vw] w-12 rounded-full"
                 src={receiverImg}
                 alt="profile"
                 onError={(e) => (e.target.src = "fallback-image-url")}
               />
             </div>
             <div className="flex flex-col justify-center">
-              <h1 className="font-semibold text-2xl">{receiverName}</h1>
-              <p className="text-lg">{receiverDivisi}</p>
+              <h1 className="font-semibold xl:text-2xl text-xl">{receiverName}</h1>
+              <p className="xl:text-lg text-md">{receiverDivisi}</p>
             </div>
           </div>
         </div>
@@ -258,11 +264,10 @@ const Chat = () => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`chat ${
-                message.sender_id === parseInt(localStorage.getItem("userId"))
+              className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId"))
                   ? "chat-end"
                   : "chat-start"
-              }`}
+                }`}
             >
               <div className="chat-bubble max-w-[52%]">
                 <strong>{message.sender_name}</strong>
@@ -274,34 +279,34 @@ const Chat = () => {
               </div>
               {message.sender_id ===
                 parseInt(localStorage.getItem("userId")) && (
-                <div className="opacity-100">
-                  <p
-                    className="cursor-pointer text-blue-500"
-                    onClick={() => {
-                      const newText = prompt(
-                        "Edit pesan:",
-                        message.message_text
-                      );
-                      if (newText !== null) {
-                        handleEdit(message.message_id, newText);
-                      }
-                    }}
-                  >
-                    Edit
-                  </p>
-                  <p
-                    className="cursor-pointer text-red-500"
-                    onClick={() => handleDelete(message.message_id)}
-                  >
-                    Delete
-                  </p>
-                  {message.is_read ? (
-                    <p className="text-green-500">Seen</p>
-                  ) : (
-                    <p className="text-red-500">Unseen</p>
-                  )}
-                </div>
-              )}
+                  <div className="opacity-100">
+                    <p
+                      className="cursor-pointer text-blue-500"
+                      onClick={() => {
+                        const newText = prompt(
+                          "Edit pesan:",
+                          message.message_text
+                        );
+                        if (newText !== null) {
+                          handleEdit(message.message_id, newText);
+                        }
+                      }}
+                    >
+                      <img src={photos.edit} alt="" className="w-4 mb-2" />
+                    </p>
+                    <p
+                      className="cursor-pointer text-red-500"
+                      onClick={() => handleDelete(message.message_id)}
+                    >
+                      <img src={photos.dellete} alt="" className="w-4 mb-2" />
+                    </p>
+                    {message.is_read ? (
+                      <img src={photos.ceklist1} alt="" className="w-4" />
+                    ) : (
+                      <img src={photos.ceklist2} alt="" className="w-4" />
+                    )}
+                  </div>
+                )}
             </div>
           ))
         ) : (
@@ -310,10 +315,10 @@ const Chat = () => {
       </div>
 
       {/* Input Chat */}
-      <div className="input-chat px-4 fixed xl:w-[74vw]">
+      <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
         <form
           onSubmit={submit}
-          className="input input-bordered flex items-center gap-2 w-full h-[45px]"
+          className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]"
         >
           <input
             type="text"
@@ -323,7 +328,7 @@ const Chat = () => {
             onChange={(e) => setMessage(e.target.value)}
           />
           <button type="submit" className="">
-            <img src={photos.logo} alt="" className="w-10" />
+            <img src={photos.logo} alt="" className="xl:w-10 w-6" />
           </button>
         </form>
       </div>

@@ -2,34 +2,89 @@ import photos from "../assets/image.js";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
+
 const SideBar = ({ collapsed, toggleCollapsed }) => {
   const navigate = useNavigate()
   const token = localStorage.getItem("authToken");
   const [userName, setUserName] = useState("Loading...");
   const [userImg, setUserImg] = useState("Loading...");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", divisi: "", kelas: "", img: null });
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    const authToken = localStorage.getItem("authToken");// Ganti dengan token yang sesuai
 
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const data = await response.json();
-        setUserName(data.name); // Simpan nama dari API ke dalam state
-        setUserImg(data.img); // Simpan nama dari API ke dalam state
-      } catch (err) {
-        setUserName("Unknown")
-        setUserImg("Unknown")
+    fetch("http://api-chat.itclub5.my.id/api/user", {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: null });
+        setLoading(false);
+      })
+      .catch((err) => {
         setError(err.message);
-      }
-    };
+        setLoading(false);
+      });
+  }, []);
 
-    fetchGroups();
-  }, [token]);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, img: e.target.files[0] });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const authToken = localStorage.getItem("authToken");
+    const formDataToSend = new FormData();
+
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("divisi", formData.divisi);
+    formDataToSend.append("kelas", formData.kelas);
+    if (formData.img) {
+      formDataToSend.append("img", formData.img);
+    }
+
+    formDataToSend.append("_method", "PUT");
+    fetch(`http://api-chat.itclub5.my.id/api/users/${user.id}`, {
+      method: "POST", // Laravel's PUT is simulated with POST and _method=PUT
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: formDataToSend,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to update user data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data.user);
+        setEditing(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   const handleLogout = async () => {
     try {
@@ -42,7 +97,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
       });
 
       if (!response.ok) throw new Error("Logout failed");
-      
+
       localStorage.clear();
       navigate("/login");
     } catch (error) {
@@ -51,16 +106,16 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   };
 
   return (
-    <div className='border-r border-gray-700'>
-      <div className=" flex xl:h-[100vh] xl:w-[4vw]">
-        <div className="flex flex-col justify-between">
+    <div className='border-r border-gray-700 h-[100vh]'>
+      <div className=" flex xl:h-[100vh] xl:w-[4vw] h-[100vh]">
+        <div className="flex flex-col justify-between h-[100vh]">
           <div>
             <div className="self-center xl:ml-3 logo xl:my-4">
               <input id="my-drawer" type="checkbox" className="drawer-toggle" />
               <div className="drawer-content">
                 {/* Page content here */}
                 <label htmlFor="my-drawer" className="drawer-button">
-                  <img src={photos.burger} alt="" className="w-20 xl:w-8 z-10" />
+                  <img src={photos.burger} alt="" className="w-10 xl:w-8 z-10" />
                 </label>
               </div>
               <div className="drawer-side">
@@ -71,22 +126,22 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 ></label>
                 <ul className="menu bg-base-200 text-base-content min-h-full z-40 xl:w-60">
                   {/* Sidebar content here */}
-                  <div className=" flex xl:h-[96vh] z-40 pl-3">
+                  <div className=" flex xl:h-[96vh] h-[97vh] z-40 pl-3">
                     <div className="flex flex-col justify-between">
-                      <div>
+                      <div className="">
                         <div className="logo xl:my-4">
                           <div className="flex">
                             <div className="img flex">
                               <img
                                 src={photos.logo}
                                 alt=""
-                                className="self-center xl:w-8 mr-3"
+                                className="self-center xl:w-8 mr-3 w-10"
                               />
                             </div>
-                            <h1 className="xl:font-semibold xl:text-4xl">Sent</h1>
+                            <h1 className="font-semibold xl:text-4xl text-4xl">Sent</h1>
                           </div>
                         </div>
-                        <div className="flex justify-center mt-10">
+                        <div className="flex xl:justify-center mt-10">
                           <button
                             className="xl:w-[7vw]"
                             onClick={() => navigate('/private')} // Set ke Private
@@ -95,15 +150,15 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                               <img
                                 src={photos.privates}
                                 alt=""
-                                className="xl:h-[25px] self-center mr-2"
+                                className="xl:h-[25px] self-center mr-2 h-8"
                               />
-                              <h1 className="xl:text-2xl self-center font-semibold">
+                              <h1 className="xl:text-2xl text-xl self-center font-semibold">
                                 Private
                               </h1>
                             </div>
                           </button>
                         </div>
-                        <div className="flex justify-center mt-10">
+                        <div className="flex xl:justify-center mt-10">
                           <button
                             className="xl:w-[7vw]"
                             onClick={() => navigate('/group')}  // Set ke Group
@@ -112,55 +167,57 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                               <img
                                 src={photos.group}
                                 alt=""
-                                className="xl:h-[25px] self-center mr-2"
+                                className="xl:h-[25px] self-center mr-2 h-8"
                               />
-                              <h1 className="xl:text-2xl self-center font-semibold">
+                              <h1 className="xl:text-2xl text-xl self-center font-semibold">
                                 Group
                               </h1>
                             </div>
                           </button>
                         </div>
-                        <div className="flex justify-center mt-10">
+                        <div className="flex xl:justify-center mt-10">
                           <button className="xl:w-[7vw]"
-                          onClick={() => navigate('/broadcast')}>
+                            onClick={() => navigate('/broadcast')}>
                             <div className="flex pl-1">
                               <img
                                 src={photos.broadcast}
                                 alt=""
-                                className="xl:h-[25px] self-center mr-2"
+                                className="xl:h-[25px] self-center mr-2 h-8"
                               />
-                              <h1 className="xl:text-2xl self-center font-semibold">
+                              <h1 className="xl:text-2xl text-xl self-center font-semibold">
                                 Broadcast
                               </h1>
                             </div>
                           </button>
                         </div>
                       </div>
-                      <div>
-                        <div className="flex justify-center">
-                          <button className="xl:w-[7vw]">
+                      <div className="">
+                        <div className="flex xl:justify-center">
+                          <button className="xl:w-[7vw]"
+                          onClick={() => document.getElementById('setting').showModal()}>
                             <div className="flex pl-1">
                               <img
                                 src={photos.setting}
                                 alt=""
-                                className="xl:h-[25px] self-center mr-2"
+                                className="xl:h-[25px] self-center mr-2 h-8"
                               />
-                              <h1 className="xl:text-2xl self-center font-semibold">
+                              <h1 className="xl:text-2xl text-xl self-center font-semibold">
                                 Setting
                               </h1>
                             </div>
                           </button>
                         </div>
                         <div className="flex justify-center mt-5">
-                          <button className="xl:w-[7vw]">
+                          <button className="xl:w-[7vw]"
+                          onClick={() => document.getElementById('user').showModal()}>
                             <div className="flex pl-1">
                               <img
-                                src={userImg}
+                                src={user.img}
                                 alt=""
-                                className="xl:h-[50px] rounded-full self-center mr-2"
+                                className="xl:h-[50px] h-12 w-12 rounded-full self-center mr-2"
                               />
-                              <h1 className="xl:text-2xl self-center font-semibold">
-                                {userName}
+                              <h1 className="xl:text-2xl text-left self-center font-semibold">
+                                {user.name}
                               </h1>
                             </div>
                           </button>
@@ -180,7 +237,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.privates}
                     alt=""
-                    className="w-10 xl:w-8 self-center"
+                    className="w-8 xl:w-8 self-center"
                   />
                 </div>
               </button>
@@ -194,19 +251,19 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.group}
                     alt=""
-                    className="w-10 xl:w-8 self-center"
+                    className="w-8 xl:w-8 self-center"
                   />
                 </div>
               </button>
             </div>
             <div className="flex justify-center mt-8">
               <button className=""
-              onClick={() => navigate('/broadcast')}>
+                onClick={() => navigate('/broadcast')}>
                 <div className="flex xl:ml-4">
                   <img
                     src={photos.broadcast}
                     alt=""
-                    className="w-10 xl:w-8 self-center"
+                    className="w-8 xl:w-8 self-center"
                   />
                 </div>
               </button>
@@ -214,17 +271,17 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
           </div>
           <div>
             <div className="flex justify-center">
-              <button className="" onClick={() => document.getElementById('my_modal_2').showModal()}>
+              <button className="" onClick={() => document.getElementById('setting').showModal()}>
                 <div className="flex xl:ml-4">
                   <img
                     src={photos.setting}
                     alt=""
-                    className="w-10 xl:w-8 self-center"
+                    className="w-8 xl:w-8 self-center"
                   />
                 </div>
               </button>
             </div>
-            <dialog id="my_modal_2" className="modal">
+            <dialog id="setting" className="modal">
               <div className="modal-box overflow-x-hidden xl:h-[36vh]">
                 <h3 className="font-bold xl:text-2xl text-center">Setting</h3>
                 <div className='flex justify-between mt-5 border-t border-b border-gray-700'>
@@ -329,17 +386,88 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 <button>close</button>
               </form>
             </dialog>
-            <div className="flex justify-center xl:my-5 xl:ml-4">
-              <button className="">
+            <div className="flex justify-center xl:my-5 xl:ml-4 my-4">
+              <button className=""
+                onClick={() => document.getElementById('user').showModal()}>
                 <div className="flex">
                   <img
-                    src={userImg}
+                    src={user.img}
                     alt=""
                     className="w-10 xl:w-12 xl:h-12 rounded-full self-center"
                   />
                 </div>
               </button>
             </div>
+            <dialog id="user" className="modal">
+              <div className="modal-box">
+                {editing ? (
+                  <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full p-2 border rounded"
+                      placeholder="Name"
+                    />
+                    <input
+                      type="text"
+                      name="divisi"
+                      value={formData.divisi}
+                      onChange={handleChange}
+                      className="w-full p-2 border rounded"
+                      placeholder="Divisi"
+                    />
+                    <input
+                      type="text"
+                      name="kelas"
+                      value={formData.kelas}
+                      onChange={handleChange}
+                      className="w-full p-2 border rounded"
+                      placeholder="Kelas"
+                    />
+                    <input
+                      type="file"
+                      name="img"
+                      onChange={handleFileChange}
+                      className="w-full p-2 border rounded"
+                    />
+                    <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+                      Save
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <img
+                      src={user.img || "https://via.placeholder.com/150"}
+                      alt="User Avatar"
+                      className="w-24 h-24 rounded-full mx-auto"
+                    />
+                    <h2 className="text-xl font-bold text-center">{user.name}</h2>
+                    <p className="text-gray-600 text-center">Email: {user.email}</p>
+                    <p className="text-gray-600 text-center">Kelas: {user.kelas}</p>
+                    <p className="text-gray-600 text-center">Divisi: {user.divisi}</p>
+                    <div className="flex justify-end align-middle gap-3">
+                      <div className="flex pt-6">
+                        <button
+                          onClick={() => setEditing(true)}
+                          className="btn self-center"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                      <div className="modal-action">
+                        <form method="dialog" className="flex">
+                          {/* if there is a button in form, it will close the modal */}
+                          <button className="btn self-center">Close</button>
+                        </form>
+                      </div>
+
+                    </div>
+                  </>
+                )}
+              </div>
+            </dialog>
           </div>
         </div>
       </div>
