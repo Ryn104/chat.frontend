@@ -52,14 +52,14 @@ const Log = () => {
     return (
         <div className="bg-base-200 xl:min-h-screen">
             <div className="xl:flex xl:justify-between xl:min-h-screen bg">
-                <div className="card w-full xl:max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
+                <div className="card w-full xl:max-w-[48vw] backdrop-blur-md backdrop-brightness-100 rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
                         <div className="grid place-content-center h-[100vh] xl:h-full">
                             <div className="logo gap-5 mb-10">
                                 <div className="xl:w-[5vw] w-20">
                                     <img src={photos.logo} alt="Logo" />
                                 </div>
-                                <h1 className="text-[13vw] xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
+                                <h1 className="text-7xl mt-3 xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
                             </div>
                             {error && <div className="text-red-500">{error}</div>} {/* Tampilkan error jika ada */}
                             <div className="xl:w-[55vw] xl:pl-[25vw]">

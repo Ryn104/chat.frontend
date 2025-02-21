@@ -60,7 +60,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
               <div className="drawer-content">
                 {/* Page content here */}
                 <label htmlFor="my-drawer" className="drawer-button">
-                  <img src={photos.burger} alt="" className="w-20 xl:w-12 z-10" />
+                  <img src={photos.burger} alt="" className="w-20 xl:w-8 z-10" />
                 </label>
               </div>
               <div className="drawer-side">
@@ -121,7 +121,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                           </button>
                         </div>
                         <div className="flex justify-center mt-10">
-                          <button className="xl:w-[7vw]">
+                          <button className="xl:w-[7vw]"
+                          onClick={() => navigate('/broadcast')}>
                             <div className="flex pl-1">
                               <img
                                 src={photos.broadcast}
@@ -179,7 +180,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.privates}
                     alt=""
-                    className="w-10 xl:h-[30px] self-center"
+                    className="w-10 xl:w-8 self-center"
                   />
                 </div>
               </button>
@@ -193,7 +194,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.group}
                     alt=""
-                    className="w-10 xl:h-[30px] self-center"
+                    className="w-10 xl:w-8 self-center"
                   />
                 </div>
               </button>
@@ -205,7 +206,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.broadcast}
                     alt=""
-                    className="w-10 xl:h-[30px] self-center"
+                    className="w-10 xl:w-8 self-center"
                   />
                 </div>
               </button>
@@ -218,13 +219,13 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={photos.setting}
                     alt=""
-                    className="w-10 xl:h-[30px] self-center"
+                    className="w-10 xl:w-8 self-center"
                   />
                 </div>
               </button>
             </div>
             <dialog id="my_modal_2" className="modal">
-              <div className="modal-box overflow-x-hidden xl:h-[30vh]">
+              <div className="modal-box overflow-x-hidden xl:h-[36vh]">
                 <h3 className="font-bold xl:text-2xl text-center">Setting</h3>
                 <div className='flex justify-between mt-5 border-t border-b border-gray-700'>
                   <p className="py-4 xl:text-xl">Notifikasi</p>
@@ -334,7 +335,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                   <img
                     src={userImg}
                     alt=""
-                    className="w-10 xl:h-[50px] rounded-full self-center"
+                    className="w-10 xl:w-12 xl:h-12 rounded-full self-center"
                   />
                 </div>
               </button>
