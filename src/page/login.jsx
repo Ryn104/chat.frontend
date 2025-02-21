@@ -54,7 +54,7 @@ const Log = () => {
             <div className="xl:flex xl:justify-between xl:min-h-screen bg">
                 <div className="card w-full xl:max-w-[48vw] shadow-2xl backdrop-blur-md backdrop-brightness-100 rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
-                        <div className="grid place-content-center h-[100vh] xl:h-full ">
+                        <div className="grid place-content-center h-[100vh] xl:h-full">
                             <div className="logo gap-5 mb-10">
                                 <div className="xl:w-[5vw] w-20">
                                     <img src={photos.logo} alt="Logo" />
@@ -62,36 +62,39 @@ const Log = () => {
                                 <h1 className="text-[13vw] xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
                             </div>
                             {error && <div className="text-red-500">{error}</div>} {/* Tampilkan error jika ada */}
-                            <div className="form-control xl:ml-[20vw]">
-                                <label className="label">
-                                    <span className="label-text text-gray-800 font-semibold">Email</span>
-                                </label>
-                                <input
-                                    type="email"
-                                    placeholder="email"
-                                    className="input input-bordered xl:h-[4vh] bg-gray-200 text-gray-700"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)} // Update state email
-                                />
-                            </div>
-                            <div className="form-control mb-10">
-                                <label className="label">
-                                    <span className="label-text text-gray-800 font-semibold">Password</span>
-                                </label>
-                                <input
-                                    type="password"
-                                    placeholder="password"
-                                    className="input input-bordered xl:w-[10vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw]"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} // Update state password
-                                />
-                                <label className="label">
-                                    <a href="#" className="label-text text-gray-800 alt link link-hover">
-                                        Forgot password?
-                                    </a>
-                                </label>
+                            <div className="xl:w-[55vw] xl:pl-[25vw]">
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text text-gray-800 font-semibold">Email</span>
+                                    </label>
+                                    <input
+                                        type="email"
+                                        placeholder="email"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 text-gray-700"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)} // Update state email
+                                    />
+                                </div>
+                                <div className="form-control mb-10">
+                                    <label className="label">
+                                        <span className="label-text text-gray-800 font-semibold">Password</span>
+                                    </label>
+                                    <input
+                                        type="password"
+                                        placeholder="password"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 text-gray-700"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)} // Update state password
+                                    />
+                                    <label className="label">
+                                        <a href="#" className="label-text text-gray-800 alt link link-hover">
+                                            Forgot password?
+                                        </a>
+                                    </label>
+                                </div>
+
                             </div>
                             <div className="form-control mt-6">
                                 <button
