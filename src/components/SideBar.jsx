@@ -199,7 +199,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
               </button>
             </div>
             <div className="flex justify-center mt-8">
-              <button className="">
+              <button className=""
+              onClick={() => navigate('/broadcast')}>
                 <div className="flex xl:ml-4">
                   <img
                     src={photos.broadcast}

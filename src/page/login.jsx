@@ -95,7 +95,7 @@ const Log = () => {
                             </div>
                             <div className="form-control mt-6">
                                 <button
-                                    className="mx-auto btn bg-gray-600 input-bordered w-[50%]"
+                                    className="mx-auto btn bg-gray-600 input-bordered w-[50%] xl:w-[15%]"
                                     disabled={loading} // Disable tombol jika sedang loading
                                 >
                                     {loading ? 'Logging in...' : 'Login'}

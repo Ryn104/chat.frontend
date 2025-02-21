@@ -6,6 +6,7 @@ import Reg from './page/register.jsx'
 import Private from './page/private.jsx'
 import Group from './page/group.jsx'
 import User from './page/user.jsx'
+import Broadcast from './page/broadcast.jsx'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path='/private' element={<Private />} />
           <Route path='/group' element={<Group />} />
           <Route path='/user' element={<User />} />
+          <Route path='/broadcast' element={<Broadcast />} />
         </Routes>
     </Router>
     </>
