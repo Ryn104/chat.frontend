@@ -181,7 +181,7 @@ const Reg = () => {
                             </div>
                             <span className="label-text text-gray-800 text-center my-5 text-base w-[80vw]">
                                 Already have an account?
-                                <a href="#" className="text-gray-600 alt link link-hover font-semibold text-base" onClick={() => navigate('/login')}> Login</a>
+                                <a href="#" className="text-gray-800 alt link link-hover font-semibold text-base" onClick={() => navigate('/login')}> Login</a>
                             </span>
                         </div>
                     </form>

@@ -108,7 +108,7 @@ const Log = () => {
                                 Don’t have an account yet?
                                 <a
                                     href="#"
-                                    className="text-gray-600 alt link link-hover font-semibold text-base"
+                                    className="text-gray-800 alt link link-hover font-semibold text-base"
                                     onClick={() => navigate('/register')} // Navigasi ke halaman register
                                 >
                                     {' '}
