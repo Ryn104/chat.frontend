@@ -78,7 +78,7 @@ const GroupKontak = ({ onSelectGroup }) => {
       <td>
         <div className="flex items-center gap-3">
           <div className="avatar">
-            <div className="rounded-full border border-gray-900 h-20 w-20">
+            <div className="rounded-full border border-gray-700 h-16 w-16 xl:h-20 xl:w-20">
               <img
                 src={img} // Gunakan gambar default jika avatar null
                 alt={name}
@@ -86,7 +86,7 @@ const GroupKontak = ({ onSelectGroup }) => {
             </div>
           </div>
           <div className="tooltip tooltip-bottom" data-tip={name}>
-            <div className="font-bold text-lg text-start">
+            <div className="font-bold text-md xl:text-lg text-start">
               {highlightText(name, searchQuery)}
             </div>
             <div className="text-gray-400 text-sm text-start">
@@ -105,14 +105,14 @@ const GroupKontak = ({ onSelectGroup }) => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-[22vw] border-gray-700 border-r">
+    <div className="xl:w-[22vw] w-[85.5vw] xl:border-gray-700 xl:border-r">
       <div className="flex">
         <div className="self-center xl:ml-6">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             {/* Page content here */}
             <label htmlFor="my-drawer" className="drawer-button">
-              <img src={photos.logo} alt="" className="xl:w-10" />
+              <img src={photos.logo} alt="" className="w-10 ml-5" />
             </label>
           </div>
           </div>
@@ -135,7 +135,7 @@ const GroupKontak = ({ onSelectGroup }) => {
         >
           <img
             src={photos.addgroup}
-            className="xl:w-5"
+            className="w-6 xl:w-5"
             onClick={() => setIsGroup(false)}
           />
         </button>

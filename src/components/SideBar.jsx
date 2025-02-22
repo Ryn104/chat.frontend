@@ -207,7 +207,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
-                        <div className="flex justify-center mt-5">
+                        <div className="flex xl:justify-center mt-5">
                           <button className="xl:w-[7vw]"
                           onClick={() => document.getElementById('user').showModal()}>
                             <div className="flex pl-1">
@@ -216,7 +216,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                                 alt=""
                                 className="xl:h-[50px] h-12 w-12 rounded-full self-center mr-2"
                               />
-                              <h1 className="xl:text-2xl text-left self-center font-semibold">
+                              <h1 className="xl:text-2xl text-xl text-left self-center font-semibold">
                                 {user.name}
                               </h1>
                             </div>
