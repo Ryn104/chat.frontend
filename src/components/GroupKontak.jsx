@@ -90,9 +90,21 @@ const GroupKontak = ({ onSelectGroup }) => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-[22vw] border-gray-700 border-r">
+    <div className="xl:w-[22vw] w-[85.5vw] xl:border-gray-700 xl:border-r">
       <div className="flex">
-        <h1 className="text-3xl font-semibold py-8 mx-5">Group Chat</h1>
+        <div className="self-center xl:ml-6">
+          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            {/* Page content here */}
+            <label htmlFor="my-drawer" className="drawer-button">
+              <img src={photos.logo} alt="" className="xl:w-10" />
+            </label>
+          </div>
+          </div>
+        <h1 className="text-3xl font-semibold py-8 mx-5">
+          Group Chat
+        </h1>
+        {/* Teks berubah */}
       </div>
       <div className="flex justify-center px-5">
         <input
@@ -102,8 +114,15 @@ const GroupKontak = ({ onSelectGroup }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="btn" onClick={() => document.getElementById("my_modal_3").showModal()}>
-          <img src={photos.addgroup} className="xl:w-5" />
+                <button
+          className="btn"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
+          <img
+            src={photos.addgroup}
+            className="xl:w-5"
+            onClick={() => setIsGroup(false)}
+          />
         </button>
       </div>
 

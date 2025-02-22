@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const GroupChat = () => {
+const GroupChat = ({onBack }) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [groupId, setGroupId] = useState(localStorage.getItem("GroupId"));
@@ -18,7 +18,7 @@ const GroupChat = () => {
     // try {
     //     const membersData = localStorage.getItem("GroupMembers");
     //     GroupMembers = membersData ? JSON.parse(membersData) : []; 
-        
+
     //     if (!Array.isArray(GroupMembers)) {
     //         GroupMembers = []; // Pastikan hasilnya array
     //     }
@@ -29,29 +29,29 @@ const GroupChat = () => {
 
     const fetchUserData = async () => {
         try {
-          const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          });
-  
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("userId", data.id); // Simpan userId
-          } else {
-            console.error("Gagal mengambil data user:", response.status);
-          }
+            const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("userId", data.id); // Simpan userId
+            } else {
+                console.error("Gagal mengambil data user:", response.status);
+            }
         } catch (error) {
-          console.error("Terjadi kesalahan saat mengambil data user:", error);
+            console.error("Terjadi kesalahan saat mengambil data user:", error);
         }
-      };
-  
-      // Panggil fungsi ini setelah login
-      fetchUserData();
-  
-      const userId = localStorage.getItem("userId");
-    
+    };
+
+    // Panggil fungsi ini setelah login
+    fetchUserData();
+
+    const userId = localStorage.getItem("userId");
+
 
     useEffect(() => {
         if (!groupId) {
@@ -137,7 +137,7 @@ const GroupChat = () => {
 
     const handleEdit = async (messageId, newText) => {
         if (!newText.trim()) return;
-    
+
         try {
             const response = await fetch(
                 `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
@@ -150,11 +150,11 @@ const GroupChat = () => {
                     body: JSON.stringify({ message_text: newText }),
                 }
             );
-    
+
             if (response.ok) {
                 const data = await response.json();
                 console.log("Pesan berhasil diedit:", data);
-    
+
                 // **Perbarui pesan di state tanpa perlu refresh**
                 setMessages((prevMessages) =>
                     prevMessages.map((msg) =>
@@ -168,16 +168,16 @@ const GroupChat = () => {
             console.error("Terjadi kesalahan saat mengedit pesan:", error);
         }
     };
-    
-    
+
+
     const handleDelete = async (messageId) => {
         console.log("Deleting message ID:", messageId); // Debugging
-    
+
         if (!messageId) {
             console.error("Message ID is undefined!");
             return;
         }
-    
+
         try {
             const response = await fetch(
                 `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
@@ -188,10 +188,10 @@ const GroupChat = () => {
                     },
                 }
             );
-    
+
             if (response.ok) {
                 console.log("Pesan berhasil dihapus:", messageId);
-                
+
                 // **Hapus pesan dari state langsung tanpa perlu refresh**
                 setMessages((prevMessages) =>
                     prevMessages.filter((msg) => msg.id !== messageId)
@@ -203,16 +203,19 @@ const GroupChat = () => {
             console.error("Terjadi kesalahan saat menghapus pesan:", error);
         }
     };
-    
+
 
     return (
-        <div className="flex h-[110vh]">
+        <div className="flex xl:h-[110vh] h-[112vh] xl:w-full w-[85.7vw]">
             <div className="w-full flex-col justify-between">
-                <div className="header w-full h-[10%] flex border-b border-gray-700">
-                    <div className="kontak flex ml-8 py-8 gap-5 w-full">
+                <div className="header w-full h-[8%] xl:h-[10%] flex border-b border-gray-700">
+                    <div className="kontak flex xl:ml-8 ml-4 py-5 xl:py-8 gap-5 w-full">
+                        <button className="" onClick={onBack}>
+                            <img src={photos.back} alt="Back" className="w-10" />
+                        </button>
                         <div className="flex items-center">
                             <img
-                                className="w-[3.3vw] rounded-full"
+                                className="w-12 xl:w-[3.3vw] rounded-full"
                                 src={GroupImg}
                                 alt="profile"
                             />
@@ -237,35 +240,35 @@ const GroupChat = () => {
                                     <p>{message.time}</p>
                                 </div>
                                 {message.sender_id ===
-                parseInt(localStorage.getItem("userId")) && (
-                <div className="opacity-100">
-                  <p
-                    className="cursor-pointer text-blue-500"
-                    onClick={() => {
-                      const newText = prompt(
-                        "Edit pesan:",
-                        message.message_text
-                      );
-                      if (newText !== null) {
-                        handleEdit(message.id, newText);
-                      }
-                    }}
-                  >
-                    Edit
-                  </p>
-                  <p
-                    className="cursor-pointer text-red-500"
-                    onClick={() => handleDelete(message.id)}
-                  >
-                    Delete
-                  </p>
-                  {message.is_read ? (
-                    <p className="text-green-500">Seen</p>
-                  ) : (
-                    <p className="text-red-500">Unseen</p>
-                  )}
-                </div>
-              )}
+                                    parseInt(localStorage.getItem("userId")) && (
+                                        <div className="opacity-100">
+                                            <p
+                                                className="cursor-pointer text-blue-500"
+                                                onClick={() => {
+                                                    const newText = prompt(
+                                                        "Edit pesan:",
+                                                        message.message_text
+                                                    );
+                                                    if (newText !== null) {
+                                                        handleEdit(message.id, newText);
+                                                    }
+                                                }}
+                                            >
+                                                <img src={photos.edit} alt="" className="w-4 mb-2" />
+                                            </p>
+                                            <p
+                                                className="cursor-pointer text-red-500"
+                                                onClick={() => handleDelete(message.id)}
+                                            >
+                                                <img src={photos.dellete} alt="" className="w-4 mb-2" />
+                                            </p>
+                                            {message.is_read ? (
+                                                <img src={photos.ceklist1} alt="" className="w-4" />
+                                            ) : (
+                                                <img src={photos.ceklist2} alt="" className="w-4" />
+                                            )}
+                                        </div>
+                                    )}
                             </div>
                         ))
                     ) : (
@@ -273,8 +276,8 @@ const GroupChat = () => {
                     )}
                 </div>
 
-                <div className="input-chat px-5 fixed xl:w-[74vw]">
-                    <form onSubmit={sendMessage} className="input input-bordered flex items-center gap-2 w-full h-[45px]">
+                <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
+                    <form onSubmit={sendMessage} className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]">
                         <input
                             type="text"
                             className="grow text-lg"
@@ -283,7 +286,7 @@ const GroupChat = () => {
                             onChange={(e) => setMessage(e.target.value)}
                         />
                         <button type="submit" className="">
-                            <img src={photos.logo} alt="" className="w-10"/>
+                            <img src={photos.logo} alt="" className="xl:w-10 w-6" />
                         </button>
                     </form>
                 </div>
