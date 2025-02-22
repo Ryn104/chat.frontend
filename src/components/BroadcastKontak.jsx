@@ -133,13 +133,13 @@ const handleSelectRecipient = (userId) => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-[22vw] border-gray-700 border-r">
+    <div className="xl:w-[22vw] w-[85.5vw] xl:border-gray-700 xl:border-r">
       <div className="flex">
         <div className="self-center xl:ml-6">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             <label htmlFor="my-drawer" className="drawer-button">
-              <img src={photos.logo} alt="" className="xl:w-10" />
+              <img src={photos.logo} alt="" className="w-10 ml-5" />
             </label>
           </div>
         </div>
@@ -155,7 +155,7 @@ const handleSelectRecipient = (userId) => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button className="btn" onClick={() => document.getElementById("my_modal_3").showModal()}>
-          <img src={photos.addgroup} className="xl:w-5" />
+          <img src={photos.addgroup} className="xl:w-5 w-6" />
         </button>
       </div>
 

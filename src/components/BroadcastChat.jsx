@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const BroadcastChat = () => {
+const BroadcastChat = ({onBack}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [broadcastId, setBroadcastId] = useState(localStorage.getItem("BroadcastId"));
@@ -94,9 +94,12 @@ const BroadcastChat = () => {
     };
 
     return (
-        <div className="flex h-[110vh]">
+        <div className="flex xl:h-[110vh] h-[107vh] xl:w-full w-[85.7vw]">
             <div className="w-full flex-col justify-between">
                 <div className="header w-full h-[10%] flex border-b border-gray-700">
+                <button className="" onClick={onBack}>
+                            <img src={photos.back} alt="Back" className="w-10 ml-5" />
+                        </button>
                     <div className="kontak flex ml-8 py-8 gap-5 w-full">
                         <h1 className="font-semibold text-2xl">Broadcast Chat</h1>
                     </div>
@@ -123,8 +126,8 @@ const BroadcastChat = () => {
                     )}
                 </div>
 
-                <div className="input-chat px-5 fixed xl:w-[74vw]">
-                    <form onSubmit={sendMessage} className="input input-bordered flex items-center gap-2 w-full h-[45px]">
+                <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
+                    <form onSubmit={sendMessage} className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]">
                         <input
                             type="text"
                             className="grow text-lg"
@@ -133,7 +136,7 @@ const BroadcastChat = () => {
                             onChange={(e) => setMessage(e.target.value)}
                         />
                         <button type="submit" className="">
-                            <img src={photos.logo} alt="" className="w-10"/>
+                            <img src={photos.logo} alt="" className="xl:w-10 w-6"/>
                         </button>
                     </form>
                 </div>

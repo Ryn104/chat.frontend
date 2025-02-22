@@ -106,9 +106,9 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   };
 
   return (
-    <div className='border-r border-gray-700 h-[100vh]'>
+    <div className='border-r border-gray-700 h-[100vh] xl:h-[100vh]'>
       <div className=" flex xl:h-[100vh] xl:w-[4vw] h-[100vh]">
-        <div className="flex flex-col justify-between h-[100vh]">
+        <div className="flex flex-col justify-between h-[100vh] xl:h-[100vh]">
           <div>
             <div className="self-center xl:ml-3 logo xl:my-4">
               <input id="my-drawer" type="checkbox" className="drawer-toggle" />
