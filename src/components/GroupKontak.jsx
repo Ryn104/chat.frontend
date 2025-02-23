@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import photos from "../assets/image.js";
 import "./Kontak.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GroupKontak = ({ onSelectGroup }) => {
   const [groups, setGroups] = useState([]);
@@ -61,15 +63,20 @@ const GroupKontak = ({ onSelectGroup }) => {
 
   const handleCreateGroup = async () => {
     if (!groupName.trim()) {
-      alert("Please enter a group name.");
+      toast.error("Please enter a group name.");
       return;
     }
   
     if (selectedRecipients.length === 0) {
-      alert("Please select at least one recipient.");
+      toast.error("Please select at least one recipient.");
       return;
     }
     
+    const newGroupPayload = {
+      name: groupName,
+      members: selectedRecipients,
+    };
+
     setCreating(true);
     try {
       const response = await fetch("http://api-chat.itclub5.my.id/api/chat/group", {
@@ -78,26 +85,29 @@ const GroupKontak = ({ onSelectGroup }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
-        body: JSON.stringify({ 
-          name: groupName,  // Tambahkan nama grup
-          recipient_ids: selectedRecipients 
-        }),
+        body: JSON.stringify(newGroupPayload),
       });
-  
+
       if (!response.ok) throw new Error(`Error ${response.status}`);
       const newGroup = await response.json();
-      
+
+      // Update the groups state with the new group
       setGroups((prev) => [newGroup, ...prev]);
       setSelectedRecipients([]);
-      setGroupName(""); // Reset nama grup setelah dibuat
+      setGroupName(""); // Reset group name after creation
+
+      // Close the modal
       document.getElementById("my_modal_3").close();
+
+      // Notify the user
+      toast.success("Group created successfully!");
     } catch (err) {
-      alert("Error creating group: " + err.message);
+      console.error("Error creating group:", err);
+      toast.error("Error creating group: " + err.message);
     } finally {
       setCreating(false);
     }
   };
-  
 
   const filteredGroups = groups.filter(
     (group) =>
@@ -139,53 +149,52 @@ const GroupKontak = ({ onSelectGroup }) => {
 
       {/* Modal Create Group */}
       <dialog id="my_modal_3" className="modal">
-  <div className="modal-box">
-    <form method="dialog">
-      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-    </form>
-    <h3 className="font-bold text-lg">Create New Group</h3>
+        <div className="modal-box">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          </form>
+          <h3 className="font-bold text-lg">Create New Group</h3>
 
-    {/* Input Nama Grup */}
-    <label className="block mt-3 text-sm font-medium">Group Name</label>
-    <input
-      type="text"
-      className="input input-bordered w-full"
-      placeholder="Enter group name"
-      value={groupName}
-      onChange={(e) => setGroupName(e.target.value)}
-    />
+          {/* Input Nama Grup */}
+          <label className="block mt-3 text-sm font-medium">Group Name</label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="Enter group name"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+          />
 
-    {/* Pilih Anggota Grup */}
-    <p className="py-4 font-semibold">Select Members:</p>
-    <div className="max-h-60 overflow-y-auto border p-2 rounded-lg">
-      {contacts.length > 0 ? (
-        contacts.map((contact) => (
-          <label key={contact.id} className="flex items-center gap-2 py-1">
-            <input
-              type="checkbox"
-              value={contact.user_id}
-              checked={selectedRecipients.includes(contact.user_id)}
-              onChange={() => handleSelectRecipient(contact.user_id)}
-            />
-            {contact.name}
-          </label>
-        ))
-      ) : (
-        <p className="text-gray-500">No contacts available</p>
-      )}
-    </div>
+          {/* Pilih Anggota Grup */}
+          <p className="py-4 font-semibold">Select Members:</p>
+          <div className="max-h-60 overflow-y-auto border p-2 rounded-lg">
+            {contacts.length > 0 ? (
+              contacts.map((contact) => (
+                <label key={contact.id} className="flex items-center gap-2 py-1">
+                  <input
+                    type="checkbox"
+                    value={contact.user_id}
+                    checked={selectedRecipients.includes(contact.user_id)}
+                    onChange={() => handleSelectRecipient(contact.user_id)}
+                  />
+                  {contact.name}
+                </label>
+              ))
+            ) : (
+              <p className="text-gray-500">No contacts available</p>
+            )}
+          </div>
 
-    {/* Tombol Buat Grup */}
-    <button
-      className="btn btn-primary mt-4 w-full"
-      onClick={handleCreateGroup}
-      disabled={creating}
-    >
-      {creating ? "Creating..." : "Create"}
-    </button>
-  </div>
-</dialog>
-
+          {/* Tombol Buat Grup */}
+          <button
+            className="btn btn-primary mt-4 w-full"
+            onClick={handleCreateGroup}
+            disabled={creating}
+          >
+            {creating ? "Creating..." : "Create"}
+          </button>
+        </div>
+      </dialog>
 
       {/* List Group */}
       <div className="overflow-x-hidden mt-8 h-[85vh]">
@@ -219,6 +228,9 @@ const GroupKontak = ({ onSelectGroup }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };
