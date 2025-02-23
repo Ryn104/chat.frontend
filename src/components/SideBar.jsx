@@ -1,6 +1,8 @@
 import photos from "../assets/image.js";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const SideBar = ({ collapsed, toggleCollapsed }) => {
@@ -30,7 +32,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
       })
       .then((data) => {
         setUser(data);
-        setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: null });
+        console.log(data)
+        setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: data.img });
         setLoading(false);
       })
       .catch((err) => {
@@ -47,11 +50,11 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     setFormData({ ...formData, img: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem("authToken");
     const formDataToSend = new FormData();
-
+  
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("divisi", formData.divisi);
@@ -59,28 +62,34 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     if (formData.img) {
       formDataToSend.append("img", formData.img);
     }
-
+  
     formDataToSend.append("_method", "PUT");
-    fetch(`http://api-chat.itclub5.my.id/api/users/${user.id}`, {
-      method: "POST", // Laravel's PUT is simulated with POST and _method=PUT
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: formDataToSend,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update user data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setUser(data.user);
-        setEditing(false);
-      })
-      .catch((err) => {
-        setError(err.message);
+  
+    try {
+      const response = await fetch(`http://api-chat.itclub5.my.id/api/users/${user.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: formDataToSend,
       });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update user data");
+      }
+  
+      const data = await response.json();
+      console.log("API Response:", data); // Debugging
+  
+      // Update the user state with the new data
+      setUser(data.user);
+      setEditing(false);
+      toast.success("image updated succesfully");
+    } catch (err) {
+      toast.error("Update Error:", err.message);
+      console.error("Update Error:", err.message); // Debugging
+      setError(err.message);
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -439,7 +448,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 ) : (
                   <>
                     <img
-                      src={user.img || "https://via.placeholder.com/150"}
+                      src={user.img} // Use the full URL returned by the backend
                       alt="User Avatar"
                       className="w-24 h-24 rounded-full mx-auto"
                     />
@@ -471,6 +480,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
           </div>
         </div>
       </div>
+       {/* Toast Container */}
+            <ToastContainer />
     </div>
   );
 };
