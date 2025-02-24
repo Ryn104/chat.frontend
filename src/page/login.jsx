@@ -61,7 +61,7 @@ const Log = () => {
                                 </div>
                                 <h1 className="text-7xl mt-3 xl:text-[4vw] font-bold xl:font-bold text-gray-600">SENT</h1>
                             </div>
-                            {error && <div className="text-red-500">{error}</div>} {/* Tampilkan error jika ada */}
+                            {error && <div className="text-red-500 xl:pl-[28vw]">{error}</div>} {/* Tampilkan error jika ada */}
                             <div className="xl:w-[50vw] xl:pl-[30vw]">
                                 <div className="form-control">
                                     <label className="label">

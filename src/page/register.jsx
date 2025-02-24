@@ -58,7 +58,7 @@ const Reg = () => {
                 <div className="card w-full xl:max-w-[48vw] backdrop-blur-md backdrop-brightness-100 shadow-xl rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
                         <div className="grid place-content-center h-[100vh] xl:h-full">
-                            <div className="logo gap-5 mb-8 mt-[-14vw] xl:mt-[0vw]">
+                            <div className="logo gap-5 mb-2 xl:mb-8 mt-[-14vw] xl:mt-[0vw]">
                                 <div className="xl:w-[5vw] w-20">
                                     <img src={photos.logo} alt="Logo" />
                                 </div>
@@ -73,7 +73,7 @@ const Reg = () => {
                                     <input
                                         type="name"
                                         placeholder="name"
-                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-8 text-sm text-gray-700 placeholder:text-gray-700"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-10 text-sm text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)} // Update state email
@@ -85,10 +85,10 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Kelas</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-8 text-sm">{kelas || "Pilih Kelas"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-10 text-sm">{kelas || "Pilih Kelas"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 rounded-xl z-[1] shadow xl:w-[14vw]">
                                                 <details className="dropdown">
-                                                    <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"TJKT"}</summary>
+                                                    <summary className="input xl:w-full xl:h-[4vh] h-6 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"TJKT"}</summary>
                                                     <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
                                                         <li><a onClick={() => setKelas("X TJKT 1")}>X TJKT 1</a></li>
                                                         <li><a onClick={() => setKelas("X TJKT 2")}>X TJKT 2</a></li>
@@ -102,7 +102,7 @@ const Reg = () => {
                                                     </ul>
                                                 </details>
                                                 <details className="dropdown">
-                                                    <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"GEO"}</summary>
+                                                    <summary className="input xl:w-full xl:h-[4vh] h-6 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"GEO"}</summary>
                                                     <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
                                                         <li><a onClick={() => setKelas("X GEO 1")}>X GEO 1</a></li>
                                                         <li><a onClick={() => setKelas("X GEO 2")}>X GEO 2</a></li>
@@ -115,6 +115,25 @@ const Reg = () => {
                                                         <li><a onClick={() => setKelas("XII GEO 3")}>XII GEO 3</a></li>
                                                     </ul>
                                                 </details>
+                                                <details className="dropdown">
+                                                    <summary className="input xl:w-full xl:h-[4vh] h-6 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"KA"}</summary>
+                                                    <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
+                                                        <li><a onClick={() => setKelas("X KA 1")}>X KA 1</a></li>
+                                                        <li><a onClick={() => setKelas("X KA 2")}>X KA 2</a></li>
+                                                        <li><a onClick={() => setKelas("XI KA 1")}>XI KA 1</a></li>
+                                                        <li><a onClick={() => setKelas("XI KA 2")}>XI KA 2</a></li>
+                                                        <li><a onClick={() => setKelas("XII KA 1")}>XII KA 1</a></li>
+                                                        <li><a onClick={() => setKelas("XII KA 2")}>XII KA 2</a></li>
+                                                    </ul>
+                                                </details>
+                                                <details className="dropdown">
+                                                    <summary className="input xl:w-full xl:h-[4vh] h-6 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"PF"}</summary>
+                                                    <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1] shadow xl:w-[13vw] w-[100%]">
+                                                        <li><a onClick={() => setKelas("X PF")}>X PF</a></li>
+                                                        <li><a onClick={() => setKelas("XI PF")}>XI PF</a></li>
+                                                        <li><a onClick={() => setKelas("XII PF")}>XII PF</a></li>
+                                                    </ul>
+                                                </details>
                                             </ul>
                                         </details>
                                     </div>
@@ -123,7 +142,7 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Divisi</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-8">{divisi || "Pilih Divisi"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-10">{divisi || "Pilih Divisi"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1]">
                                                 <li><a onClick={() => setDivisi("Programming")}>Programming</a></li>
                                                 <li><a onClick={() => setDivisi("Multimedia")}>Multimedia</a></li>
@@ -140,7 +159,7 @@ const Reg = () => {
                                         <input
                                             type="email"
                                             placeholder="Email"
-                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] text-sm bg-gray-200 xl:text-[0.8vw] h-8 text-gray-700 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] text-sm bg-gray-200 xl:text-[0.8vw] h-10 text-gray-700 placeholder:text-gray-700"
                                             required
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
@@ -153,7 +172,7 @@ const Reg = () => {
                                         <input
                                             type="password"
                                             placeholder="Password"
-                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-sm text-gray-700 h-8 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-sm text-gray-700 h-10 placeholder:text-gray-700"
                                             required
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -167,14 +186,14 @@ const Reg = () => {
                                     <input
                                         type="password"
                                         placeholder="Confirm Password"
-                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-8 text-sm text-gray-700 placeholder:text-gray-700"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-10 text-sm text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={passwordConfirmation}
                                         onChange={(e) => setPasswordConfirmation(e.target.value)}
                                     />
                                 </div>
                             </div>
-                            <div className="form-control mt-14">
+                            <div className="form-control xl:mt-14 mt-6">
                                 <button className="mx-auto btn bg-gray-600 input-bordered w-[50%] xl:w-[15%]" disabled={loading}>
                                     {loading ? 'Registering...' : 'Register'}
                                 </button>
