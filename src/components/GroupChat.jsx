@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
@@ -9,6 +9,18 @@ const GroupChat = ({ onBack }) => {
   const groupName = localStorage.getItem("GroupName") || "Unknown";
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
+
+    const messagesContainerRef = useRef(null); // Reference to the message container
+  
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+      scrollToBottom(); // Scroll to bottom whenever messages change
+    }, [messages]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -215,7 +227,8 @@ const GroupChat = ({ onBack }) => {
           </div>
         </div>
 
-        <div className="value-chat px-5 pt-8 h-[76%] overflow-y-auto">
+        <div className="value-chat px-5 pt-8 h-[76%] overflow-y-auto"
+          ref={messagesContainerRef} >
           {messages.map((message, index) => (
             <div
               key={index}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
@@ -12,6 +12,18 @@ const Chat = ({ contactId, onBack }) => {
   const receiverName = localStorage.getItem("receiverName") || "Unknown";
   const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
+
+  const messagesContainerRef = useRef(null); // Reference to the message container
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom(); // Scroll to bottom whenever messages change
+  }, [messages]);
 
   useEffect(() => {
     if (!receiverId) {
@@ -229,7 +241,6 @@ const Chat = ({ contactId, onBack }) => {
     }
   };
 
-
   return (
     <div className="xl:w-full flex-col justify-between xl:h-[110vh] h-[112vh] w-[85.7vw]">
       {/* Header */}
@@ -259,7 +270,10 @@ const Chat = ({ contactId, onBack }) => {
       </div>
 
       {/* Chat Messages */}
-      <div className="value-chat px-5 pt-8 h-[76%] overflow-y-auto">
+      <div
+        className="value-chat px-5 pt-8 h-[76%] overflow-y-auto"
+        ref={messagesContainerRef} // Attach the ref to the message container
+      >
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <div
