@@ -244,7 +244,7 @@ const Chat = ({ contactId, onBack }) => {
             </button>
             <div className="flex items-center">
               <img
-                className="xl:w-[3.3vw] w-12 rounded-full"
+                className="xl:w-[3.3vw] xl:h-[3.3vw] w-12 h-12 rounded-full"
                 src={receiverImg}
                 alt="profile"
                 onError={(e) => (e.target.src = "fallback-image-url")}

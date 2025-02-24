@@ -58,7 +58,7 @@ const Reg = () => {
                 <div className="card w-full xl:max-w-[48vw] backdrop-blur-md backdrop-brightness-100 shadow-xl rounded-none">
                     <form className="card-body" onSubmit={handleSubmit}>
                         <div className="grid place-content-center h-[100vh] xl:h-full">
-                            <div className="logo gap-5 mb-8">
+                            <div className="logo gap-5 mb-8 mt-[-14vw] xl:mt-[0vw]">
                                 <div className="xl:w-[5vw] w-20">
                                     <img src={photos.logo} alt="Logo" />
                                 </div>
@@ -73,7 +73,7 @@ const Reg = () => {
                                     <input
                                         type="name"
                                         placeholder="name"
-                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-8 text-sm text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)} // Update state email
@@ -85,7 +85,7 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Kelas</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{kelas || "Pilih Kelas"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-8 text-sm">{kelas || "Pilih Kelas"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 rounded-xl z-[1] shadow xl:w-[14vw]">
                                                 <details className="dropdown">
                                                     <summary className="input xl:w-full xl:h-[4vh] pt-2 bg-gray-200 xl:text-[0.8vw] text-gray-700 w-28">{"TJKT"}</summary>
@@ -123,7 +123,7 @@ const Reg = () => {
                                             <span className="label-text text-gray-800 font-semibold">Divisi</span>
                                         </label>
                                         <details className="dropdown">
-                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal">{divisi || "Pilih Divisi"}</summary>
+                                            <summary className="btn input border border-gray-300 w-[100%] xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 font-normal h-8">{divisi || "Pilih Divisi"}</summary>
                                             <ul className="menu dropdown-content bg-gray-200 xl:text-[0.8vw] text-gray-700 rounded-xl z-[1]">
                                                 <li><a onClick={() => setDivisi("Programming")}>Programming</a></li>
                                                 <li><a onClick={() => setDivisi("Multimedia")}>Multimedia</a></li>
@@ -140,7 +140,7 @@ const Reg = () => {
                                         <input
                                             type="email"
                                             placeholder="Email"
-                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] text-sm bg-gray-200 xl:text-[0.8vw] h-8 text-gray-700 placeholder:text-gray-700"
                                             required
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
@@ -153,7 +153,7 @@ const Reg = () => {
                                         <input
                                             type="password"
                                             placeholder="Password"
-                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                            className="input input-bordered xl:w-[14.5vw] xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-sm text-gray-700 h-8 placeholder:text-gray-700"
                                             required
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -167,7 +167,7 @@ const Reg = () => {
                                     <input
                                         type="password"
                                         placeholder="Confirm Password"
-                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] text-gray-700 placeholder:text-gray-700"
+                                        className="input input-bordered xl:w-full xl:h-[4vh] bg-gray-200 xl:text-[0.8vw] h-8 text-sm text-gray-700 placeholder:text-gray-700"
                                         required
                                         value={passwordConfirmation}
                                         onChange={(e) => setPasswordConfirmation(e.target.value)}
