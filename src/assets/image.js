@@ -25,6 +25,7 @@ import dellete from './image/delete.png'
 import ceklist1 from './image/ceklist1.png'
 import ceklist2 from './image/ceklist2.png'
 import back from './image/back.png'
+import side from './image/side.png'
 
 // Tambahkan impor lainnya di sini
 
@@ -56,6 +57,7 @@ const photos = {
   ceklist1,
   ceklist2,
   back,
+  side,
 
 };
 

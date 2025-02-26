@@ -19,7 +19,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");// Ganti dengan token yang sesuai
 
-    fetch("http://api-chat.itclub5.my.id/api/user", {
+    fetch("http://127.0.0.1:8000/api/user", {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -66,7 +66,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     formDataToSend.append("_method", "PUT");
   
     try {
-      const response = await fetch(`http://api-chat.itclub5.my.id/api/users/${user.id}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -97,7 +97,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://api-chat.itclub5.my.id/api/logout", {
+      const response = await fetch("http://127.0.0.1:8000/api/logout", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

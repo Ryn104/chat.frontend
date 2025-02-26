@@ -13,7 +13,7 @@ const Kontak = ({ onSelectContact }) => {
   useEffect(() => {
     const fetchContacts = async () => {
         try {
-            const url = "http://api-chat.itclub5.my.id/api/contact";
+            const url = "http://127.0.0.1:8000/api/contact";
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
