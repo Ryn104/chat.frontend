@@ -15,6 +15,27 @@ const Chat = ({ contactId, onBack }) => {
   const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+const [messageToDelete, setMessageToDelete] = useState(null);
+
+const handleDeleteClick = (messageId) => {
+  setMessageToDelete(messageId);
+  setIsDeleteModalOpen(true);
+};
+
+const handleDeleteConfirm = async () => {
+  if (messageToDelete) {
+    await handleDelete(messageToDelete);
+  }
+  setIsDeleteModalOpen(false);
+  setMessageToDelete(null);
+};
+
+const handleDeleteCancel = () => {
+  setIsDeleteModalOpen(false);
+  setMessageToDelete(null);
+};
+
   const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -205,6 +226,32 @@ const Chat = ({ contactId, onBack }) => {
     }
   };
 
+  const ConfirmationModal = ({ isOpen, onConfirm, onCancel, message }) => {
+    if (!isOpen) return null;
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg">
+          <p>{message}</p>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={onCancel}
+              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+            >
+              Batal
+            </button>
+            <button
+              onClick={onConfirm}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Hapus
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleDelete = async (messageId) => {
     console.log("Deleting message ID:", messageId);
 
@@ -323,11 +370,11 @@ const Chat = ({ contactId, onBack }) => {
                     <img src={photos.edit} alt="" className="w-4 mb-2" />
                   </p>
                   <p
-                    className="cursor-pointer text-red-500"
-                    onClick={() => handleDelete(message.message_id)}
-                  >
-                    <img src={photos.dellete} alt="" className="w-4 mb-2" />
-                  </p>
+  className="cursor-pointer text-red-500"
+  onClick={() => handleDeleteClick(message.message_id)}
+>
+  <img src={photos.dellete} alt="" className="w-4 mb-2" />
+</p>
                   {message.is_read ? (
                     <img src={photos.ceklist1} alt="" className="w-4" />
                   ) : (
@@ -372,6 +419,12 @@ const Chat = ({ contactId, onBack }) => {
     )}
   </form>
 </div>
+<ConfirmationModal
+  isOpen={isDeleteModalOpen}
+  onConfirm={handleDeleteConfirm}
+  onCancel={handleDeleteCancel}
+  message="Apakah Anda yakin ingin menghapus pesan ini?"
+/>
     </div>
   );
 };
