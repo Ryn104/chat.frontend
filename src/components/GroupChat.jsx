@@ -5,13 +5,18 @@ import photos from "../assets/image.js";
 const GroupChat = ({ onBack }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState(null); // Untuk menyimpan ID pesan yang sedang diedit
+  const [editingMessageText, setEditingMessageText] = useState(""); // Untuk menyimpan teks pesan yang sedang diedit
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Untuk mengontrol modal konfirmasi hapus
+  const [messageToDelete, setMessageToDelete] = useState(null); // Untuk menyimpan ID pesan yang akan dihapus
+
   const groupId = localStorage.getItem("GroupId");
   const groupName = localStorage.getItem("GroupName") || "Unknown";
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
 
-    const messagesContainerRef = useRef(null); // Reference to the message container
-  
+  const messagesContainerRef = useRef(null); // Reference to the message container
+
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -19,8 +24,8 @@ const GroupChat = ({ onBack }) => {
   };
 
   useEffect(() => {
-      scrollToBottom(); // Scroll to bottom whenever messages change
-    }, [messages]);
+    scrollToBottom(); // Scroll to bottom whenever messages change
+  }, [messages]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -90,7 +95,6 @@ const GroupChat = ({ onBack }) => {
     const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
     const channel = pusher.subscribe(`private-group-chat.${groupId}`);
 
-
     const handleNewMessage = (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
     };
@@ -134,7 +138,6 @@ const GroupChat = ({ onBack }) => {
             name: result.data.user_name || "Unknown User", // Default jika null
           },
         };
-        
 
         setMessages((prevMessages) => [...prevMessages, sentMessage]);
         setMessage("");
@@ -148,6 +151,12 @@ const GroupChat = ({ onBack }) => {
     } catch (error) {
       console.error("Error sending message:", error);
     }
+  };
+
+  const startEditing = (messageId, messageText) => {
+    setEditingMessageId(messageId); // Set ID pesan yang sedang diedit
+    setEditingMessageText(messageText); // Set teks pesan yang sedang diedit
+    setMessage(messageText); // Set teks pesan ke input
   };
 
   const handleEdit = async (messageId, newText) => {
@@ -168,17 +177,40 @@ const GroupChat = ({ onBack }) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Pesan berhasil diedit:", data);
+
+        // Perbarui pesan di state messages
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
             msg.id === messageId ? { ...msg, message_text: newText } : msg
           )
         );
+        setEditingMessageId(null); // Matikan mode edit
+        setMessage(""); // Reset input
       } else {
-        console.error("Failed to edit message:", response.status);
+        console.error("Gagal mengedit pesan:", response.status);
       }
     } catch (error) {
-      console.error("Error editing message:", error);
+      console.error("Terjadi kesalahan saat mengedit pesan:", error);
     }
+  };
+
+  const handleDeleteClick = (messageId) => {
+    setMessageToDelete(messageId); // Set ID pesan yang akan dihapus
+    setIsDeleteModalOpen(true); // Buka modal konfirmasi
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (messageToDelete) {
+      await handleDelete(messageToDelete); // Panggil fungsi hapus
+    }
+    setIsDeleteModalOpen(false); // Tutup modal
+    setMessageToDelete(null); // Reset state
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false); // Tutup modal tanpa menghapus
+    setMessageToDelete(null); // Reset state
   };
 
   const handleDelete = async (messageId) => {
@@ -203,11 +235,37 @@ const GroupChat = ({ onBack }) => {
           prevMessages.filter((msg) => msg.id !== messageId)
         );
       } else {
-        console.error("Failed to delete message:", response.status);
+        console.error("Gagal menghapus pesan:", response.status);
       }
     } catch (error) {
-      console.error("Error deleting message:", error);
+      console.error("Terjadi kesalahan saat menghapus pesan:", error);
     }
+  };
+
+  const ConfirmationModal = ({ isOpen, onConfirm, onCancel, message }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg">
+          <p>{message}</p>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={onCancel}
+              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+            >
+              Batal
+            </button>
+            <button
+              onClick={onConfirm}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Hapus
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -250,16 +308,13 @@ const GroupChat = ({ onBack }) => {
                 <div className="opacity-100">
                   <p
                     className="cursor-pointer text-blue-500"
-                    onClick={() => {
-                      const newText = prompt("Edit pesan:", message.message_text);
-                      if (newText !== null) handleEdit(message.id, newText);
-                    }}
+                    onClick={() => startEditing(message.id, message.message_text)}
                   >
                     <img src={photos.edit} alt="" className="w-4 mb-2" />
                   </p>
                   <p
                     className="cursor-pointer text-red-500"
-                    onClick={() => handleDelete(message.id)}
+                    onClick={() => handleDeleteClick(message.id)}
                   >
                     <img src={photos.dellete} alt="" className="w-4 mb-2" />
                   </p>
@@ -276,22 +331,47 @@ const GroupChat = ({ onBack }) => {
 
         <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
           <form
-            onSubmit={sendMessage}
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (editingMessageId) {
+                handleEdit(editingMessageId, message); // Jika sedang edit, panggil handleEdit
+              } else {
+                sendMessage(e); // Jika tidak, kirim pesan baru
+              }
+            }}
             className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]"
           >
             <input
               type="text"
               className="grow text-lg"
-              placeholder="Masukkan Pesan"
+              placeholder={editingMessageId ? "Edit Pesan" : "Masukkan Pesan"}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
             <button type="submit">
               <img src={photos.logo} alt="" className="xl:w-10 w-6" />
             </button>
+            {editingMessageId && (
+              <button
+                type="button"
+                className="text-red-500"
+                onClick={() => {
+                  setEditingMessageId(null); // Batalkan mode edit
+                  setMessage(""); // Reset input
+                }}
+              >
+                Batal
+              </button>
+            )}
           </form>
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        message="Apakah Anda yakin ingin menghapus pesan ini?"
+      />
     </div>
   );
 };
