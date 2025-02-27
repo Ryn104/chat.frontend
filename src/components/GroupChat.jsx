@@ -92,66 +92,103 @@ const GroupChat = ({ onBack }) => {
   }, [groupId, token]);
 
   useEffect(() => {
-    const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
+    if (!groupId) return;
+
+    const pusher = new Pusher("6cdc86054a25f0168d17", {
+        cluster: "ap1",
+        authEndpoint: "http://127.0.0.1:8000/api/broadcasting/auth",
+        auth: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+            credentials: "include",
+        },
+        authTransport: "ajax", // Gunakan AJAX agar method-nya POST
+    });
+
     const channel = pusher.subscribe(`private-group-chat.${groupId}`);
 
-    const handleNewMessage = (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-    };
+    channel.bind("pusher:subscription_succeeded", () => {
+        console.log("✅ Subscribed to channel:", `private-group-chat.${groupId}`);
+    });
 
-    channel.bind("group-message-sent", handleNewMessage);
+    channel.bind("pusher:subscription_error", (status) => {
+        console.error("❌ Subscription error:", status);
+    });
+
+    channel.bind("group-message-sent", (data) => {
+        console.log("📩 New message received:", data);
+
+        // Cek apakah pesan sudah ada di state messages
+        const isMessageExist = messages.some((msg) => msg.id === data.id);
+
+        // Jika pesan belum ada, tambahkan ke state
+        if (!isMessageExist) {
+            setMessages((prevMessages) => [...prevMessages, {
+                id: data.id,
+                message_text: data.message_text,
+                sender_id: data.sender_id,
+                sender: {
+                    id: data.sender_id,
+                    name: data.sender_name || "Unknown User", // Gunakan sender_name dari data Pusher
+                },
+                created_at: data.created_at,
+            }]);
+        }
+    });
 
     return () => {
-      channel.unbind("group-message-sent", handleNewMessage);
-      channel.unsubscribe();
+        channel.unbind_all();
+        channel.unsubscribe();
     };
-  }, []);
+}, [groupId, messages]); // Tambahkan messages ke dependency array
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    if (!message.trim()) return;
 
-    const newMessage = {
+
+
+useEffect(() => {
+    if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+}, [messages]);
+
+const sendMessage = async (e) => {
+  e.preventDefault();
+  if (!message.trim()) return;
+
+  const newMessage = {
       group_id: groupId,
       message_text: message,
-    };
+  };
 
-    try {
+  try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/chat/group/message",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(newMessage),
-        }
+          "http://127.0.0.1:8000/api/chat/group/message",
+          {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(newMessage),
+          }
       );
 
       if (response.ok) {
-        const result = await response.json();
-        const sentMessage = {
-          ...result.data.chat,
-          sender: {
-            id: parseInt(userId),
-            name: result.data.user_name || "Unknown User", // Default jika null
-          },
-        };
-
-        setMessages((prevMessages) => [...prevMessages, sentMessage]);
-        setMessage("");
+          const result = await response.json();
+          console.log("Pesan berhasil dikirim:", result);
+          setMessage(""); // Reset input setelah pengiriman
       } else if (response.status === 429) {
-        const retryAfter = response.headers.get("Retry-After") || 1;
-        console.error(`Rate limit exceeded. Try again in ${retryAfter} seconds.`);
-        setTimeout(() => sendMessage(e), retryAfter * 1000);
+          const retryAfter = response.headers.get("Retry-After") || 1;
+          console.error(`Rate limit exceeded. Try again in ${retryAfter} seconds.`);
+          setTimeout(() => sendMessage(e), retryAfter * 1000);
       } else {
-        console.error("Failed to send message:", response.status);
+          console.error("Failed to send message:", response.status);
       }
-    } catch (error) {
+  } catch (error) {
       console.error("Error sending message:", error);
-    }
-  };
+  }
+};
 
   const startEditing = (messageId, messageText) => {
     setEditingMessageId(messageId); // Set ID pesan yang sedang diedit
