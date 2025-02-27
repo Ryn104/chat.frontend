@@ -13,6 +13,7 @@ const GroupKontak = ({ onSelectGroup }) => {
   const [error, setError] = useState(null);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [creating, setCreating] = useState(false);
+  const [groupImage, setGroupImage] = useState(null);
   
   useEffect(() => {
     const controller = new AbortController();
@@ -21,7 +22,7 @@ const GroupKontak = ({ onSelectGroup }) => {
 
     const fetchContacts = async () => {
       try {
-        const response = await fetch("http://api-chat.itclub5.my.id/api/contact", {
+        const response = await fetch("http://127.0.0.1:8000/api/contact", {
           headers: { Authorization: `Bearer ${token}` },
           signal,
         });
@@ -35,7 +36,7 @@ const GroupKontak = ({ onSelectGroup }) => {
 
     const fetchGroups = async () => {
       try {
-        const response = await fetch("http://api-chat.itclub5.my.id/api/group-contacts", {
+        const response = await fetch("http://127.0.0.1:8000/api/group-contacts", {
           headers: { Authorization: `Bearer ${token}` },
           signal,
         });
@@ -71,34 +72,40 @@ const GroupKontak = ({ onSelectGroup }) => {
       toast.error("Please select at least one recipient.");
       return;
     }
-    
-    const newGroupPayload = {
-      name: groupName,
-      members: selectedRecipients,
-    };
 
+    
+    console.log("Group Image:", groupImage);
+
+    const formData = new FormData();
+    formData.append("name", groupName);
+    formData.append("image", groupImage);
+    selectedRecipients.forEach((id, index) => {
+      formData.append(`members[${index}]`, id); // Kirim sebagai array
+    });
+
+  
     setCreating(true);
     try {
-      const response = await fetch("http://api-chat.itclub5.my.id/api/chat/group", {
+      const response = await fetch("http://127.0.0.1:8000/api/chat/group", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
-        body: JSON.stringify(newGroupPayload),
+        body: formData,
       });
-
+  
       if (!response.ok) throw new Error(`Error ${response.status}`);
       const newGroup = await response.json();
-
+  
       // Update the groups state with the new group
       setGroups((prev) => [newGroup, ...prev]);
       setSelectedRecipients([]);
       setGroupName(""); // Reset group name after creation
-
+      setGroupImage(null); // Reset group image after creation
+  
       // Close the modal
       document.getElementById("my_modal_3").close();
-
+  
       // Notify the user
       toast.success("Group created successfully!");
     } catch (err) {
@@ -149,52 +156,76 @@ const GroupKontak = ({ onSelectGroup }) => {
 
       {/* Modal Create Group */}
       <dialog id="my_modal_3" className="modal">
-        <div className="modal-box">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          </form>
-          <h3 className="font-bold text-lg">Create New Group</h3>
+  <div className="modal-box">
+    <form method="dialog">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 className="font-bold text-lg">Create New Group</h3>
 
-          {/* Input Nama Grup */}
-          <label className="block mt-3 text-sm font-medium">Group Name</label>
-          <input
-            type="text"
-            className="input input-bordered w-full"
-            placeholder="Enter group name"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+
+    {/* Input Image */}
+    <label className="block mt-3 text-sm font-medium">Group Image</label>
+    <div className="flex justify-center">
+      <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-gray-300">
+        <input
+          type="file"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          onChange={(e) => setGroupImage(e.target.files[0])}
+          accept="image/*"
+        />
+        {groupImage ? (
+          <img
+            src={URL.createObjectURL(groupImage)}
+            alt="Group Preview"
+            className="w-full h-full object-cover"
           />
-
-          {/* Pilih Anggota Grup */}
-          <p className="py-4 font-semibold">Select Members:</p>
-          <div className="max-h-60 overflow-y-auto border p-2 rounded-lg">
-            {contacts.length > 0 ? (
-              contacts.map((contact) => (
-                <label key={contact.id} className="flex items-center gap-2 py-1">
-                  <input
-                    type="checkbox"
-                    value={contact.user_id}
-                    checked={selectedRecipients.includes(contact.user_id)}
-                    onChange={() => handleSelectRecipient(contact.user_id)}
-                  />
-                  {contact.name}
-                </label>
-              ))
-            ) : (
-              <p className="text-gray-500">No contacts available</p>
-            )}
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-500 text-sm">Upload</span>
           </div>
+        )}
+      </div>
+    </div>
 
-          {/* Tombol Buat Grup */}
-          <button
-            className="btn btn-primary mt-4 w-full"
-            onClick={handleCreateGroup}
-            disabled={creating}
-          >
-            {creating ? "Creating..." : "Create"}
-          </button>
-        </div>
-      </dialog>
+        {/* Input Nama Grup */}
+        <label className="block mt-3 text-sm font-medium">Group Name</label>
+        <input
+          type="text"
+          className="input input-bordered w-full"
+          placeholder="Enter group name"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+        />
+    {/* Pilih Anggota Grup */}
+    <p className="py-4 font-semibold">Select Members:</p>
+    <div className="max-h-60 overflow-y-auto border p-2 rounded-lg">
+      {contacts.length > 0 ? (
+        contacts.map((contact) => (
+          <label key={contact.id} className="flex items-center gap-2 py-1">
+            <input
+              type="checkbox"
+              value={contact.user_id}
+              checked={selectedRecipients.includes(contact.user_id)}
+              onChange={() => handleSelectRecipient(contact.user_id)}
+            />
+            {contact.name}
+          </label>
+        ))
+      ) : (
+        <p className="text-gray-500">No contacts available</p>
+      )}
+    </div>
+
+    {/* Tombol Buat Grup */}
+    <button
+      className="btn btn-primary mt-4 w-full"
+      onClick={handleCreateGroup}
+      disabled={creating}
+    >
+      {creating ? "Creating..." : "Create"}
+    </button>
+  </div>
+</dialog>
 
       {/* List Group */}
       <div className="overflow-x-hidden mt-8 h-[85vh]">
@@ -202,28 +233,28 @@ const GroupKontak = ({ onSelectGroup }) => {
           <tbody>
             {filteredGroups.map(({ group_id, name, description, members, img }) => (
               <tr
-                key={group_id}
-                className="w-full hover"
-                onClick={() => {
-                  localStorage.setItem("GroupId", group_id);
-                  localStorage.setItem("GroupName", name);
-                  localStorage.setItem("GroupDescription", description);
-                  localStorage.setItem("GroupMembers", JSON.stringify(members));
-                  localStorage.setItem("GroupImg", img);
-                  onSelectGroup(group_id);
-                }}
-              >
-                <td>
-                  <div className="flex items-center gap-3">
-                    <div className="avatar">
-                      <div className="rounded-full border border-gray-900 h-20 w-20">
-                        <img src={img} alt={name} />
-                      </div>
+              key={group_id}
+              className="w-full hover"
+              onClick={() => {
+                localStorage.setItem("GroupId", group_id);
+                localStorage.setItem("GroupName", name);
+                localStorage.setItem("GroupDescription", description);
+                localStorage.setItem("GroupMembers", JSON.stringify(members));
+                localStorage.setItem("GroupImg", img);
+                onSelectGroup(group_id);
+              }}
+            >
+              <td>
+                <div className="flex items-center gap-3">
+                  <div className="avatar">
+                    <div className="rounded-full border border-gray-900 h-20 w-20">
+                      <img src={img} alt={name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="font-bold text-lg">{name}</div>
                   </div>
-                </td>
-              </tr>
+                  <div className="font-bold text-lg">{name}</div>
+                </div>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>

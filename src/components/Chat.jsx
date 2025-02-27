@@ -16,31 +16,32 @@ const Chat = ({ contactId, onBack }) => {
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-const [messageToDelete, setMessageToDelete] = useState(null);
+  const [messageToDelete, setMessageToDelete] = useState(null);
 
-const handleDeleteClick = (messageId) => {
-  setMessageToDelete(messageId);
-  setIsDeleteModalOpen(true);
-};
+  const handleDeleteClick = (messageId) => {
+    setMessageToDelete(messageId);
+    setIsDeleteModalOpen(true);
+  };
 
-const handleDeleteConfirm = async () => {
-  if (messageToDelete) {
-    await handleDelete(messageToDelete);
-  }
-  setIsDeleteModalOpen(false);
-  setMessageToDelete(null);
-};
+  const handleDeleteConfirm = async () => {
+    if (messageToDelete) {
+      await handleDelete(messageToDelete);
+    }
+    setIsDeleteModalOpen(false);
+    setMessageToDelete(null);
+  };
 
-const handleDeleteCancel = () => {
-  setIsDeleteModalOpen(false);
-  setMessageToDelete(null);
-};
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setMessageToDelete(null);
+  };
 
   const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   };
 
@@ -119,12 +120,12 @@ const handleDeleteCancel = () => {
           const isMessageExist = prevMessages.some(
             (msg) => msg.message_id === data.message_id
           );
-    
+
           // Jika pesan belum ada, tambahkan ke state
           if (!isMessageExist) {
             return [...prevMessages, data];
           }
-    
+
           // Jika pesan sudah ada, kembalikan state tanpa perubahan
           return prevMessages;
         });
@@ -144,7 +145,7 @@ const handleDeleteCancel = () => {
   const submit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-  
+
     if (editingMessageId) {
       // Jika sedang dalam mode edit, panggil fungsi handleEdit
       await handleEdit(editingMessageId, message);
@@ -156,7 +157,7 @@ const handleDeleteCancel = () => {
         receiver_id: receiverId,
         message_text: message,
       };
-  
+
       try {
         const response = await fetch("http://127.0.0.1:8000/api/chat/", {
           method: "POST",
@@ -166,7 +167,7 @@ const handleDeleteCancel = () => {
           },
           body: JSON.stringify(newMessage),
         });
-  
+
         if (response.ok) {
           const data = await response.json(); // Ambil data lengkap dari respons server
           console.log("Pesan berhasil dikirim:", data);
@@ -183,16 +184,15 @@ const handleDeleteCancel = () => {
   const startEditing = (messageId, messageText) => {
     console.log("Editing Message ID:", messageId);
     console.log("Editing Message Text:", messageText);
-    
+
     setEditingMessageId(messageId);
     setEditingMessageText(messageText);
     setMessage(messageText);
   };
 
-
   const handleEdit = async (messageId, newText) => {
     if (!newText.trim()) return;
-  
+
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/api/chat/message/${messageId}`,
@@ -205,11 +205,11 @@ const handleDeleteCancel = () => {
           body: JSON.stringify({ message_text: newText }),
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log("Pesan berhasil diedit:", data);
-  
+
         // Perbarui pesan di state messages
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
@@ -228,7 +228,7 @@ const handleDeleteCancel = () => {
 
   const ConfirmationModal = ({ isOpen, onConfirm, onCancel, message }) => {
     if (!isOpen) return null;
-  
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg">
@@ -307,6 +307,22 @@ const handleDeleteCancel = () => {
     }
   };
 
+  // Function to generate default avatar text
+  const generateDefaultAvatar = (name) => {
+    const words = name.split(" ");
+    let avatarText = "";
+
+    if (words.length >= 2) {
+      // Take the first letter of the first two words
+      avatarText = words[0].charAt(0) + words[1].charAt(0);
+    } else if (words.length === 1) {
+      // Take the first two letters of the single word
+      avatarText = words[0].substring(0, 2);
+    }
+
+    return avatarText.toUpperCase(); // Convert to uppercase
+  };
+
   return (
     <div className="xl:w-full flex-col justify-between xl:h-[110vh] h-[112vh] w-[85.7vw]">
       {/* Header */}
@@ -318,15 +334,31 @@ const handleDeleteCancel = () => {
                 <img src={photos.back} className="w-10" />
               </button>
               <div className="flex items-center">
-                <img
-                  className="xl:w-[3.3vw] xl:h-[3.3vw] w-12 h-12 rounded-full"
-                  src={receiverImg}
-                  alt="profile"
-                  onError={(e) => (e.target.src = "fallback-image-url")}
-                />
+                {receiverImg === "http://127.0.0.1:8000/storage" ? (
+                  <div className="xl:w-[3.3vw] xl:h-[3.3vw] w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-xl">
+                    {generateDefaultAvatar(receiverName)}
+                  </div>
+                ) : (
+                  <img
+                    className="xl:w-[3.3vw] xl:h-[3.3vw] w-12 h-12 rounded-full"
+                    src={receiverImg}
+                    alt="profile"
+                    onError={(e) => {
+                      // If the image fails to load, display the default avatar
+                      e.target.style.display = "none";
+                      e.target.parentElement.innerHTML = `
+                  <div class="xl:w-[3.3vw] xl:h-[3.3vw] w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-xl">
+                    ${generateDefaultAvatar(receiverName)}
+                  </div>
+                `;
+                    }}
+                  />
+                )}
               </div>
               <div className="flex flex-col justify-center">
-                <h1 className="font-semibold xl:text-2xl text-xl">{receiverName}</h1>
+                <h1 className="font-semibold xl:text-2xl text-xl">
+                  {receiverName}
+                </h1>
                 <p className="xl:text-lg text-md">{receiverDivisi}</p>
               </div>
             </div>
@@ -362,19 +394,21 @@ const handleDeleteCancel = () => {
               </div>
               {message.sender_id ===
                 parseInt(localStorage.getItem("userId")) && (
-                  <div className="opacity-100">
+                <div className="opacity-100">
                   <p
                     className="cursor-pointer text-blue-500"
-                    onClick={() => startEditing(message.message_id, message.message_text)}
+                    onClick={() =>
+                      startEditing(message.message_id, message.message_text)
+                    }
                   >
                     <img src={photos.edit} alt="" className="w-4 mb-2" />
                   </p>
                   <p
-  className="cursor-pointer text-red-500"
-  onClick={() => handleDeleteClick(message.message_id)}
->
-  <img src={photos.dellete} alt="" className="w-4 mb-2" />
-</p>
+                    className="cursor-pointer text-red-500"
+                    onClick={() => handleDeleteClick(message.message_id)}
+                  >
+                    <img src={photos.dellete} alt="" className="w-4 mb-2" />
+                  </p>
                   {message.is_read ? (
                     <img src={photos.ceklist1} alt="" className="w-4" />
                   ) : (
@@ -391,40 +425,40 @@ const handleDeleteCancel = () => {
 
       {/* Input Chat */}
       <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
-  <form
-    onSubmit={submit}
-    className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]"
-  >
-    <input
-      type="text"
-      className="grow text-lg"
-      placeholder={editingMessageId ? "Edit Pesan" : "Masukkan Pesan"}
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-    />
-    <button type="submit" className="">
-      <img src={photos.logo} alt="" className="xl:w-10 w-6" />
-    </button>
-    {editingMessageId && (
-      <button
-        type="button"
-        className="text-red-500"
-        onClick={() => {
-          setEditingMessageId(null); // Batalkan mode edit
-          setMessage(""); // Reset input
-        }}
-      >
-        Batal
-      </button>
-    )}
-  </form>
-</div>
-<ConfirmationModal
-  isOpen={isDeleteModalOpen}
-  onConfirm={handleDeleteConfirm}
-  onCancel={handleDeleteCancel}
-  message="Apakah Anda yakin ingin menghapus pesan ini?"
-/>
+        <form
+          onSubmit={submit}
+          className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]"
+        >
+          <input
+            type="text"
+            className="grow text-lg"
+            placeholder={editingMessageId ? "Edit Pesan" : "Masukkan Pesan"}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button type="submit" className="">
+            <img src={photos.logo} alt="" className="xl:w-10 w-6" />
+          </button>
+          {editingMessageId && (
+            <button
+              type="button"
+              className="text-red-500"
+              onClick={() => {
+                setEditingMessageId(null); // Batalkan mode edit
+                setMessage(""); // Reset input
+              }}
+            >
+              Batal
+            </button>
+          )}
+        </form>
+      </div>
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        message="Apakah Anda yakin ingin menghapus pesan ini?"
+      />
     </div>
   );
 };

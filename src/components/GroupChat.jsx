@@ -26,7 +26,7 @@ const GroupChat = ({ onBack }) => {
     const fetchUserData = async () => {
       if (!userId) {
         try {
-          const response = await fetch("http://api-chat.itclub5.my.id/api/user", {
+          const response = await fetch("http://127.0.0.1:8000/api/user", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const GroupChat = ({ onBack }) => {
     const fetchGroupChat = async (retries = 5, delay = 1000) => {
       try {
         const response = await fetch(
-          `http://api-chat.itclub5.my.id/api/chat/group/${groupId}`,
+          `http://127.0.0.1:8000/api/chat/group/${groupId}`,
           {
             method: "GET",
             headers: {
@@ -88,7 +88,8 @@ const GroupChat = ({ onBack }) => {
 
   useEffect(() => {
     const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
-    const channel = pusher.subscribe("group-chat-channel");
+    const channel = pusher.subscribe(`private-group-chat.${groupId}`);
+
 
     const handleNewMessage = (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
@@ -113,7 +114,7 @@ const GroupChat = ({ onBack }) => {
 
     try {
       const response = await fetch(
-        "http://api-chat.itclub5.my.id/api/chat/group/message",
+        "http://127.0.0.1:8000/api/chat/group/message",
         {
           method: "POST",
           headers: {
@@ -130,9 +131,10 @@ const GroupChat = ({ onBack }) => {
           ...result.data.chat,
           sender: {
             id: parseInt(userId),
-            name: result.data.user_name,
+            name: result.data.user_name || "Unknown User", // Default jika null
           },
         };
+        
 
         setMessages((prevMessages) => [...prevMessages, sentMessage]);
         setMessage("");
@@ -153,7 +155,7 @@ const GroupChat = ({ onBack }) => {
 
     try {
       const response = await fetch(
-        `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
+        `http://127.0.0.1:8000/api/chat/message/${messageId}`,
         {
           method: "PUT",
           headers: {
@@ -187,7 +189,7 @@ const GroupChat = ({ onBack }) => {
 
     try {
       const response = await fetch(
-        `http://api-chat.itclub5.my.id/api/chat/message/${messageId}`,
+        `http://127.0.0.1:8000/api/chat/message/${messageId}`,
         {
           method: "DELETE",
           headers: {
