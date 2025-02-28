@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const GroupChat = ({ onBack }) => {
+const GroupChat = ({ onBack,  onToggleDescript }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [editingMessageId, setEditingMessageId] = useState(null); // Untuk menyimpan ID pesan yang sedang diedit
@@ -313,14 +313,25 @@ const sendMessage = async (e) => {
             <button onClick={onBack}>
               <img src={photos.back} alt="Back" className="w-10" />
             </button>
-            <div className="flex items-center">
-              <img
-                className="w-12 xl:w-[3.3vw] rounded-full"
-                src={localStorage.getItem("GroupImg") || "Unknown"}
-                alt="profile"
-              />
+            <div className="flex justify-between w-full pr-6 xl:pr-10">
+              <div className="flex gap-4">
+                <div className="flex items-center self-center">
+                  <img
+                    className="w-12 xl:w-[3.3vw] rounded-full"
+                    src={localStorage.getItem("GroupImg") || "Unknown"}
+                    alt="profile"
+                  />
+                </div>
+                <h1 className="font-semibold xl:text-2xl text-xl self-center">{groupName}</h1>
+              </div>
+              <div className="self-center">
+                <img
+                  src={photos.side}
+                  className="w-8 cursor-pointer"
+                  onClick={onToggleDescript}
+                />
+              </div>
             </div>
-            <h1 className="font-semibold text-2xl">{groupName}</h1>
           </div>
         </div>
 
@@ -366,7 +377,7 @@ const sendMessage = async (e) => {
           ))}
         </div>
 
-        <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
+        <div className="input-chat px-4 py-1">
           <form
             onSubmit={(e) => {
               e.preventDefault();

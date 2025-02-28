@@ -34,7 +34,7 @@ const App = () => {
         <div className={`${selectedContact ? 'hidden' : ''} xl:block`}>
           <Kontak onSelectContact={handleSelectContact} />
         </div>
-        <div className={`transition-all duration-300 ${selectedContact ? (selectedDescript ? 'xl:w-[50vw]' : 'xl:w-[73.9vw]') : 'hidden'} xl:block`}>
+        <div className={`transition-all duration-300 ${selectedContact ? (selectedDescript ? 'xl:w-[50vw] hidden xl:block' : 'xl:w-[73.9vw]') : 'hidden'} xl:block`}>
           {selectedContact && (
             <Chat 
               key={selectedContact} 

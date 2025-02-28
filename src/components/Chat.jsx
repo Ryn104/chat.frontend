@@ -279,7 +279,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
         <div className="bg-white p-6 rounded-lg">
           <p>{message}</p>
           <div className="flex justify-end mt-4">
@@ -377,7 +377,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
       {/* Header */}
       <div className="header w-full xl:h-[10%] h-[8%] flex border-b border-gray-700">
         <div className="kontak flex py-3 px-4 justify-between w-full">
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full xl:pr-6">
             <div className="flex gap-3">
               <button className="" onClick={() => onBack()}>
                 <img src={photos.back} className="w-10" />
@@ -412,16 +412,16 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
               </div>
             </div>
             <div className="self-center">
-  <img 
-    src={photos.side} 
-    className="xl:w-8 cursor-pointer" 
-    onClick={() => {
-      if (onSelectDescript) {
-        onSelectDescript(true); // Menandakan bahwa Description harus muncul
-      }
-    }} 
-  />
-</div>
+              <img
+                src={photos.side}
+                className="w-8 cursor-pointer"
+                onClick={() => {
+                  if (onSelectDescript) {
+                    onSelectDescript(true); // Menandakan bahwa Description harus muncul
+                  }
+                }}
+              />
+            </div>
 
 
           </div>
@@ -438,8 +438,8 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
             <div
               key={index}
               className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId"))
-                  ? "chat-end"
-                  : "chat-start"
+                ? "chat-end"
+                : "chat-start"
                 }`}
             >
               <div className="chat-bubble max-w-[52%]">

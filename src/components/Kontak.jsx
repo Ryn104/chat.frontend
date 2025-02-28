@@ -89,6 +89,7 @@ const generateDefaultAvatar = (name) => {
         onClick={() => {
           localStorage.setItem("receiverId", user_id); // Simpan ID ke localStorage
           localStorage.setItem("receiverName", name); // Simpan Nama ke localStorage
+          localStorage.setItem("receiverClass", kelas); // Simpan Nama ke localStorage
           localStorage.setItem("receiverDivisi", divisi); // Simpan Divisi ke localStorage
           localStorage.setItem("receiverImg", img); // Simpan Gambar ke localStorage
           localStorage.setItem("receiverEmail", email); // Simpan Gambar ke localStorage

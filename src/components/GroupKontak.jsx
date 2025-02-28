@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const GroupKontak = ({ onSelectGroup }) => {
   const [groups, setGroups] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [members, setMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [groupName, setGroupName] = useState(""); // Nama grup

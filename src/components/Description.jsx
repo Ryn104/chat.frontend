@@ -3,6 +3,7 @@ import photos from "../assets/image.js";
 
 const Description = ({onBackDesc}) => {
     const receiverName = localStorage.getItem("receiverName") || "Unknown";
+    const receiverClass = localStorage.getItem("receiverClass") || "Unknown";
     const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
     const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
     const receiverEmail = localStorage.getItem("receiverEmail") || "Unknown";
@@ -22,10 +23,10 @@ const Description = ({onBackDesc}) => {
         return avatarText.toUpperCase(); // Convert to uppercase
     };
     return (
-        <div className="flex justify-center border-l border-gray-700 h-full">
-            <div className="mt-10 w-full">
-                <div className="flex xl:px-10 pt-2 pb-10 justify-between w-full border-b mb-5 border-gray-700">
-                    <div className="flex gap-6">
+        <div className="flex justify-center border-l border-gray-700 h-full w-[85.7vw] xl:w-full">
+            <div className="xl:mt-10 mt-6 w-full">
+                <div className="flex px-10 pt-2 xl:pb-10 pb-6 justify-between w-full border-b mb-5 border-gray-700">
+                    <div className="flex xl:gap-6 gap-4 mr-2">
                         {receiverImg === "http://127.0.0.1:8000/storage" ? (
                             <div className="w-20 h-20 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-xl">
                                 {generateDefaultAvatar(receiverName)}
@@ -52,12 +53,12 @@ const Description = ({onBackDesc}) => {
                         </div>
                     </div>
                     <div className="self-center" onClick={() => onBackDesc()}>
-                        <img src={photos.back} alt="" className="w-12 h-12"/>
+                        <img src={photos.back} alt="" className="w-10 h-10"/>
                     </div>
                 </div>
-                <div className="flex xl:px-10">
+                <div className="flex px-10">
                     <div className="flex flex-col gap-4 w-full">
-                        <div className="flex gap-4 w-full pt-4">
+                        <div className="flex gap-4 w-full xl:pt-4">
                             <img src={photos.classs} alt="" className="w-10 h-10 self-center" />
                             <div>
                                 <h1 className="xl:text-xl font-semibold">XII TJKT 1</h1>
