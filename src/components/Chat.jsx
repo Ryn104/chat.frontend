@@ -16,7 +16,6 @@ const Chat = ({ contactId, onBack }) => {
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
   const [broadcastId, setBroadcastId] = useState(null);
 
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
 
@@ -111,73 +110,86 @@ const Chat = ({ contactId, onBack }) => {
   useEffect(() => {
     const pusher = new Pusher("6cdc86054a25f0168d17", {
       cluster: "ap1",
+      encrypted: true,
     });
 
-    const channel = pusher.subscribe("chat-channel");
+    const chatChannel = pusher.subscribe("chat-channel");
+    const broadcastChannel = pusher.subscribe("broadcast-chat-channel");
 
     const handleNewMessage = (data) => {
       if (data.message_id) {
         setMessages((prevMessages) => {
-          // Cek apakah pesan sudah ada di state messages
           const isMessageExist = prevMessages.some(
             (msg) => msg.message_id === data.message_id
           );
-
-          // Jika pesan belum ada, tambahkan ke state
-          if (!isMessageExist) {
-            return [...prevMessages, data];
-          }
-
-          // Jika pesan sudah ada, kembalikan state tanpa perubahan
-          return prevMessages;
+          return isMessageExist ? prevMessages : [...prevMessages, data];
         });
-      } else {
-        console.error("Pesan baru tidak memiliki message_id");
       }
     };
 
-    channel.bind("message-sent", handleNewMessage);
+    const handleEditMessage = (data) => {
+      console.log("Pesan yang diterima untuk edit:", data);
+
+      if (!data.message_id) return;
+
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.message_id === data.message_id
+            ? { ...msg, message_text: data.message_text }
+            : msg
+        )
+      );
+    };
+
+    const handleDeleteMessage = (data) => {
+      console.log("Pesan sebelum dihapus:", messages);
+      console.log("Mencari message_id:", data.message_id);
+
+      setMessages((prevMessages) => {
+        const filteredMessages = prevMessages.filter(
+          (msg) => String(msg.message_id) !== String(data.message_id)
+        );
+
+        console.log("Pesan setelah dihapus:", filteredMessages);
+        return filteredMessages;
+      });
+    };
+
+   const handleMarkAsRead = (data) => {
+    console.log("Pesan dibaca event diterima:", data);
+
+    if (!data.message_ids || !Array.isArray(data.message_ids)) {
+        console.error("message_ids tidak ditemukan dalam event");
+        return;
+    }
+
+    setMessages((prevMessages) => {
+        console.log("Sebelum update:", prevMessages);
+        const updatedMessages = prevMessages.map((msg) =>
+            data.message_ids.includes(Number(msg.message_id))
+                ? { ...msg, is_read: true }
+                : msg
+        );
+        console.log("Setelah update:", updatedMessages);
+        return updatedMessages;
+    });
+};
+
+
+    chatChannel.bind("message-sent", handleNewMessage);
+    chatChannel.bind("message-updated", handleEditMessage);
+    chatChannel.bind("message-deleted", handleDeleteMessage);
+    chatChannel.bind("message-read", handleMarkAsRead);
+    broadcastChannel.bind("broadcast-message-sent", handleNewMessage);
 
     return () => {
-      channel.unbind("message-sent", handleNewMessage);
-      channel.unsubscribe();
+      chatChannel.unbind_all();
+      chatChannel.unsubscribe();
+      broadcastChannel.unbind_all();
+      broadcastChannel.unsubscribe();
     };
-  }, []);
+  }, [receiverId, broadcastId]);
 
-  useEffect(() => {
-    const pusher = new Pusher("6cdc86054a25f0168d17", {
-      cluster: "ap1",
-    });
-  
-    const channel = pusher.subscribe(`broadcast-chat-channel`);
-  
-    channel.bind("pusher:subscription_succeeded", () => {
-      console.log("✅ Berhasil subscribe ke channel!");
-    });
-  
-    channel.bind("broadcast-message-sent", (data) => {
-      console.log("📩 Pesan diterima dari Pusher:", data);
-      setMessages(prev => [...prev, data]); 
-    });
-  
-    pusher.connection.bind("connected", () => {
-      console.log("✅ Pusher terhubung!");
-    });
-  
-    pusher.connection.bind("disconnected", () => {
-      console.log("❌ Pusher terputus!");
-    });
-  
-    pusher.connection.bind("error", (err) => {
-      console.error("⚠️ Pusher error:", err);
-    });
-  
-    return () => {
-      channel.unbind("broadcast-message-sent");
-      channel.unsubscribe();
-    };
-  }, [broadcastId]);
-  
   const submit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;
