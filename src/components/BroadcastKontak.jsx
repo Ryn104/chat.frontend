@@ -15,7 +15,7 @@ const GroupKontak = ({ onSelectGroup }) => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch("http://api-chat.itclub5.my.id/api/contact", {
+        const response = await fetch("http://127.0.0.1:8000/api/contact", {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -29,7 +29,7 @@ const GroupKontak = ({ onSelectGroup }) => {
 
     const fetchBroadcasts = async () => {
       try {
-        const response = await fetch("http://api-chat.itclub5.my.id/api/chat/broadcast/list", {
+        const response = await fetch("http://127.0.0.1:8000/api/chat/broadcast/list", {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -50,7 +50,7 @@ const GroupKontak = ({ onSelectGroup }) => {
   const handleCreateBroadcast = async () => {
     setCreating(true);
     try {
-      const response = await fetch("http://api-chat.itclub5.my.id/api/chat/broadcast/create", {
+      const response = await fetch("http://127.0.0.1:8000/api/chat/broadcast/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

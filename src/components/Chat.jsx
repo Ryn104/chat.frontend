@@ -14,6 +14,8 @@ const Chat = ({ contactId, onBack }) => {
   const receiverName = localStorage.getItem("receiverName") || "Unknown";
   const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
+  const [broadcastId, setBroadcastId] = useState(null);
+
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
@@ -142,6 +144,40 @@ const Chat = ({ contactId, onBack }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const pusher = new Pusher("6cdc86054a25f0168d17", {
+      cluster: "ap1",
+    });
+  
+    const channel = pusher.subscribe(`broadcast-chat-channel`);
+  
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log("✅ Berhasil subscribe ke channel!");
+    });
+  
+    channel.bind("broadcast-message-sent", (data) => {
+      console.log("📩 Pesan diterima dari Pusher:", data);
+      setMessages(prev => [...prev, data]); 
+    });
+  
+    pusher.connection.bind("connected", () => {
+      console.log("✅ Pusher terhubung!");
+    });
+  
+    pusher.connection.bind("disconnected", () => {
+      console.log("❌ Pusher terputus!");
+    });
+  
+    pusher.connection.bind("error", (err) => {
+      console.error("⚠️ Pusher error:", err);
+    });
+  
+    return () => {
+      channel.unbind("broadcast-message-sent");
+      channel.unsubscribe();
+    };
+  }, [broadcastId]);
+  
   const submit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;

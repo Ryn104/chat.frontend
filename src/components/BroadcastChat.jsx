@@ -2,51 +2,32 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-
-
-// Custom Hook untuk Pusher
-const usePusher = (broadcastId, onNewMessage) => {
-  useEffect(() => {
-    if (!broadcastId) return;
-
-    const pusher = new Pusher("6cdc86054a25f0168d17", { cluster: "ap1" });
-    const channel = pusher.subscribe(`broadcast-chat-channel-${broadcastId}`);
-
-    channel.bind("broadcast-message-sent", onNewMessage);
-
-    return () => {
-      channel.unbind("broadcast-message-sent", onNewMessage);
-      channel.unsubscribe();
-      pusher.disconnect();
-    };
-  }, [broadcastId, onNewMessage]);
-};
-
 const BroadcastChat = ({ onBack }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [messagesFetched, setMessagesFetched] = useState(false);
   const broadcastId = localStorage.getItem("BroadcastId");
   const token = localStorage.getItem("authToken");
 
-  const messagesContainerRef = useRef(null); // Reference to the message container
-  
+  const messagesContainerRef = useRef(null);
+
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   };
 
   useEffect(() => {
-      scrollToBottom(); // Scroll to bottom whenever messages change
-    }, [messages]);
+    scrollToBottom();
+  }, [messages]);
 
-  // Fetch Pesan Broadcast
   const fetchBroadcastMessages = useCallback(async () => {
-    if (!broadcastId) return;
-    
+    if (!broadcastId || messagesFetched) return;
+
     try {
       const response = await fetch(
-        `http://api-chat.itclub5.my.id/api/chat/broadcast/${broadcastId}`,
+        `http://127.0.0.1:8000/api/chat/broadcast/${broadcastId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -56,35 +37,68 @@ const BroadcastChat = ({ onBack }) => {
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
 
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setMessages(data);
-      } else {
-        setMessages([{ message_text: "Failed to load messages." }]);
-      }
+
+      // Hindari duplikasi dengan Set
+      const uniqueMessages = Array.from(
+        new Map(
+          data.map((msg) => [msg.created_at + msg.message_text, msg])
+        ).values()
+      );
+
+      setMessages(
+        uniqueMessages.sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        )
+      );
+      setMessagesFetched(true);
     } catch (error) {
       console.error("Error fetching messages:", error);
-      setMessages([{ message_text: "Error fetching messages. Check your connection." }]);
+      setMessages([{ message_text: "Error fetching messages." }]);
     }
-  }, [broadcastId, token]);
+  }, [broadcastId, token, messagesFetched]);
 
-  // Update pesan saat ada perubahan broadcastId
   useEffect(() => {
     fetchBroadcastMessages();
-  }, [broadcastId, fetchBroadcastMessages]);
+  }, [fetchBroadcastMessages]);
 
-  // Handle Pesan Baru dari Pusher
-  const handleNewMessage = useCallback(
-    (newMessage) => {
-      if (newMessage.broadcast_id === broadcastId) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+  useEffect(() => {
+    if (!broadcastId) return;
+
+    const pusher = new Pusher("6cdc86054a25f0168d17", {
+      cluster: "ap1",
+    });
+
+    const channel = pusher.subscribe(`broadcast-chat-channel`);
+
+    const handleNewMessage = (data) => {
+      if (data.broadcast_id === broadcastId) {
+        setMessages((prevMessages) => {
+          const messagesSet = new Map(
+            prevMessages.map((msg) => [msg.created_at + msg.message_text, msg])
+          );
+
+          // Hanya tambahkan jika belum ada
+          if (!messagesSet.has(data.created_at + data.message_text)) {
+            messagesSet.set(data.created_at + data.message_text, data);
+          }
+
+          return Array.from(messagesSet.values()).sort(
+            (a, b) => new Date(a.created_at) - new Date(b.created_at)
+          );
+        });
+        scrollToBottom();
       }
-    },
-    [broadcastId]
-  );
+    };
 
-  usePusher(broadcastId, handleNewMessage);
+    channel.unbind("broadcast-message-sent", handleNewMessage);
+    channel.bind("broadcast-message-sent", handleNewMessage);
 
-  // Kirim Pesan
+    return () => {
+      channel.unbind("broadcast-message-sent", handleNewMessage);
+      channel.unsubscribe();
+    };
+  }, [broadcastId]);
+
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -92,28 +106,39 @@ const BroadcastChat = ({ onBack }) => {
     const newMessage = {
       broadcast_id: broadcastId,
       message_text: message,
-      created_at: new Date().toISOString(), // Optimistic UI
+      created_at: new Date().toISOString(),
     };
 
-    setMessages((prevMessages) => [...prevMessages, newMessage]); // Optimistic UI
-    setMessage(""); // Kosongkan input
-
-    try {
-      const response = await fetch(
-        "http://api-chat.itclub5.my.id/api/chat/broadcast",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ broadcast_id: broadcastId, message_text: message }),
-        }
+    setMessages((prevMessages) => {
+      const messagesSet = new Map(
+        prevMessages.map((msg) => [msg.created_at + msg.message_text, msg])
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
+      messagesSet.set(
+        newMessage.created_at + newMessage.message_text,
+        newMessage
+      );
+      return Array.from(messagesSet.values()).sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+    });
+
+    setMessage("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/chat/broadcast", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          broadcast_id: broadcastId,
+          message_text: message,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to send message");
     } catch (error) {
       console.error("Error sending message:", error);
       alert("Error sending message. Please check your connection.");
@@ -134,8 +159,9 @@ const BroadcastChat = ({ onBack }) => {
         </div>
 
         {/* Chat Messages */}
-        <div className="value-chat px-5 pt-8 h-[76%] overflow-y-auto"
-        ref={messagesContainerRef}
+        <div
+          className="value-chat px-5 pt-8 h-[76%] overflow-y-auto"
+          ref={messagesContainerRef}
         >
           {messages.length > 0 ? (
             messages.map((msg, index) => (
@@ -144,7 +170,19 @@ const BroadcastChat = ({ onBack }) => {
                   <p>{msg.message_text}</p>
                 </div>
                 <div className="chat-footer opacity-50">
-                  <p>{new Date(msg.created_at).toLocaleString()}</p>
+                  <p>
+                    {new Date(msg.created_at).toISOString().split("T")[0]}
+                    ,&nbsp;
+                    {new Date(msg.created_at).toLocaleDateString("en-US", {
+                      weekday: "short",
+                    })}
+                  </p>
+                  <p>
+                    {new Date(msg.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
                 </div>
               </div>
             ))
