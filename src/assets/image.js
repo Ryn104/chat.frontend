@@ -26,6 +26,9 @@ import ceklist1 from './image/ceklist1.png'
 import ceklist2 from './image/ceklist2.png'
 import back from './image/back.png'
 import side from './image/side.png'
+import email from './image/email.png'
+import classs from './image/classs.png'
+import division from './image/division.png'
 
 // Tambahkan impor lainnya di sini
 
@@ -58,6 +61,9 @@ const photos = {
   ceklist2,
   back,
   side,
+  email,
+  classs,
+  division,
 
 };
 

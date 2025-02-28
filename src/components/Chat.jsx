@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Pusher from "pusher-js";
 import photos from "../assets/image.js";
 
-const Chat = ({ contactId, onBack }) => {
+const Chat = ({ contactId, onBack, onSelectDescript }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -14,6 +14,7 @@ const Chat = ({ contactId, onBack }) => {
   const receiverName = localStorage.getItem("receiverName") || "Unknown";
   const receiverDivisi = localStorage.getItem("receiverDivisi") || "Unknown";
   const receiverImg = localStorage.getItem("receiverImg") || "Unknown";
+  const receiverEmail = localStorage.getItem("receiverEmail") || "Unknown";
   const [broadcastId, setBroadcastId] = useState(null);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -155,25 +156,25 @@ const Chat = ({ contactId, onBack }) => {
       });
     };
 
-   const handleMarkAsRead = (data) => {
-    console.log("Pesan dibaca event diterima:", data);
+    const handleMarkAsRead = (data) => {
+      console.log("Pesan dibaca event diterima:", data);
 
-    if (!data.message_ids || !Array.isArray(data.message_ids)) {
+      if (!data.message_ids || !Array.isArray(data.message_ids)) {
         console.error("message_ids tidak ditemukan dalam event");
         return;
-    }
+      }
 
-    setMessages((prevMessages) => {
+      setMessages((prevMessages) => {
         console.log("Sebelum update:", prevMessages);
         const updatedMessages = prevMessages.map((msg) =>
-            data.message_ids.includes(Number(msg.message_id))
-                ? { ...msg, is_read: true }
-                : msg
+          data.message_ids.includes(Number(msg.message_id))
+            ? { ...msg, is_read: true }
+            : msg
         );
         console.log("Setelah update:", updatedMessages);
         return updatedMessages;
-    });
-};
+      });
+    };
 
 
     chatChannel.bind("message-sent", handleNewMessage);
@@ -376,7 +377,7 @@ const Chat = ({ contactId, onBack }) => {
       {/* Header */}
       <div className="header w-full xl:h-[10%] h-[8%] flex border-b border-gray-700">
         <div className="kontak flex py-3 px-4 justify-between w-full">
-          <div>
+          <div className="flex justify-between w-full">
             <div className="flex gap-3">
               <button className="" onClick={() => onBack()}>
                 <img src={photos.back} className="w-10" />
@@ -410,9 +411,19 @@ const Chat = ({ contactId, onBack }) => {
                 <p className="xl:text-lg text-md">{receiverDivisi}</p>
               </div>
             </div>
-            <div>
-              <img src={photos.side} />
-            </div>
+            <div className="self-center">
+  <img 
+    src={photos.side} 
+    className="xl:w-8 cursor-pointer" 
+    onClick={() => {
+      if (onSelectDescript) {
+        onSelectDescript(true); // Menandakan bahwa Description harus muncul
+      }
+    }} 
+  />
+</div>
+
+
           </div>
         </div>
       </div>
@@ -426,11 +437,10 @@ const Chat = ({ contactId, onBack }) => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`chat ${
-                message.sender_id === parseInt(localStorage.getItem("userId"))
+              className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId"))
                   ? "chat-end"
                   : "chat-start"
-              }`}
+                }`}
             >
               <div className="chat-bubble max-w-[52%]">
                 <strong>{message.sender_name}</strong>
@@ -442,28 +452,28 @@ const Chat = ({ contactId, onBack }) => {
               </div>
               {message.sender_id ===
                 parseInt(localStorage.getItem("userId")) && (
-                <div className="opacity-100">
-                  <p
-                    className="cursor-pointer text-blue-500"
-                    onClick={() =>
-                      startEditing(message.message_id, message.message_text)
-                    }
-                  >
-                    <img src={photos.edit} alt="" className="w-4 mb-2" />
-                  </p>
-                  <p
-                    className="cursor-pointer text-red-500"
-                    onClick={() => handleDeleteClick(message.message_id)}
-                  >
-                    <img src={photos.dellete} alt="" className="w-4 mb-2" />
-                  </p>
-                  {message.is_read ? (
-                    <img src={photos.ceklist1} alt="" className="w-4" />
-                  ) : (
-                    <img src={photos.ceklist2} alt="" className="w-4" />
-                  )}
-                </div>
-              )}
+                  <div className="opacity-100">
+                    <p
+                      className="cursor-pointer text-blue-500"
+                      onClick={() =>
+                        startEditing(message.message_id, message.message_text)
+                      }
+                    >
+                      <img src={photos.edit} alt="" className="w-4 mb-2" />
+                    </p>
+                    <p
+                      className="cursor-pointer text-red-500"
+                      onClick={() => handleDeleteClick(message.message_id)}
+                    >
+                      <img src={photos.dellete} alt="" className="w-4 mb-2" />
+                    </p>
+                    {message.is_read ? (
+                      <img src={photos.ceklist1} alt="" className="w-4" />
+                    ) : (
+                      <img src={photos.ceklist2} alt="" className="w-4" />
+                    )}
+                  </div>
+                )}
             </div>
           ))
         ) : (
@@ -472,7 +482,7 @@ const Chat = ({ contactId, onBack }) => {
       </div>
 
       {/* Input Chat */}
-      <div className="input-chat px-4 fixed xl:w-[74vw] w-[85vw]">
+      <div className="input-chat px-4 py-1">
         <form
           onSubmit={submit}
           className="input input-bordered flex items-center gap-2 w-full xl:h-[45px] h-[4.5vh]"

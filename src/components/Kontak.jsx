@@ -78,7 +78,7 @@ const generateDefaultAvatar = (name) => {
     );
   };
 
-   const renderRow = ({ user_id, name, img, divisi, kelas, last_online }) => {
+   const renderRow = ({ user_id, name, img, divisi, kelas, email, last_online }) => {
     // Check if the img URL is the default one
     const isDefaultImg = img === "http://127.0.0.1:8000/storage";
 
@@ -91,6 +91,7 @@ const generateDefaultAvatar = (name) => {
           localStorage.setItem("receiverName", name); // Simpan Nama ke localStorage
           localStorage.setItem("receiverDivisi", divisi); // Simpan Divisi ke localStorage
           localStorage.setItem("receiverImg", img); // Simpan Gambar ke localStorage
+          localStorage.setItem("receiverEmail", email); // Simpan Gambar ke localStorage
           onSelectContact(user_id); // Panggil callback untuk tindakan lainnya
         }}
       >
