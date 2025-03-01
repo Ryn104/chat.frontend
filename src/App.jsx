@@ -7,6 +7,7 @@ import Private from './page/private.jsx'
 import Group from './page/group.jsx'
 import User from './page/user.jsx'
 import Broadcast from './page/broadcast.jsx'
+import PageNotFound from './page/pagenotfound.jsx'
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path='/group' element={<Group />} />
           <Route path='/user' element={<User />} />
           <Route path='/broadcast' element={<Broadcast />} />
+          <Route path='*' element={<PageNotFound />} />
         </Routes>
     </Router>
     </>
