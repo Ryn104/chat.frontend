@@ -396,13 +396,13 @@ const sendMessage = async (e) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <button type="submit">
-              <img src={photos.logo} alt="" className="xl:w-10 w-6" />
+            <button type="submit" className="xl:mr-[-8px]">
+              <img src={photos.logo} alt="" className="xl:w-8 w-6" />
             </button>
             {editingMessageId && (
               <button
                 type="button"
-                className="text-red-500"
+                className="text-red-500 border border-red-500 hover:bg-red-500 hover:text-gray-900 font-semibold px-4 py-1 rounded-md xl:ml-4 ml-[-4px] xl:mr-[-11px]"
                 onClick={() => {
                   setEditingMessageId(null); // Batalkan mode edit
                   setMessage(""); // Reset input

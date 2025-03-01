@@ -207,8 +207,8 @@ const BroadcastChat = ({ onBack }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <button type="submit">
-              <img src={photos.logo} alt="" className="xl:w-10 w-6" />
+            <button type="submit" className="xl:mr-[-8px]">
+              <img src={photos.logo} alt="" className="xl:w-8 w-6" />
             </button>
           </form>
         </div>
