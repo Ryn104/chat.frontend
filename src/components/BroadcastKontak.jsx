@@ -4,6 +4,8 @@ import "./Kontak.css";
 
 const GroupKontak = ({ onSelectGroup }) => {
   const [broadcasts, setBroadcasts] = useState([]);
+    const [messages, setMessages] = useState([]);
+
   const [contacts, setContacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);

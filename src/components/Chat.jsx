@@ -118,6 +118,9 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
     const broadcastChannel = pusher.subscribe("broadcast-chat-channel");
 
     const handleNewMessage = (data) => {
+      console.log("New message event received:", data); // Tambahkan log
+      console.log("Current messages:", messages);
+    
       if (data.message_id) {
         setMessages((prevMessages) => {
           const isMessageExist = prevMessages.some(
@@ -127,6 +130,8 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
         });
       }
     };
+    
+    
 
     const handleEditMessage = (data) => {
       console.log("Pesan yang diterima untuk edit:", data);

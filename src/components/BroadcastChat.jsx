@@ -63,41 +63,42 @@ const BroadcastChat = ({ onBack }) => {
 
   useEffect(() => {
     if (!broadcastId) return;
-
+  
     const pusher = new Pusher("6cdc86054a25f0168d17", {
       cluster: "ap1",
     });
-
+  
     const channel = pusher.subscribe(`broadcast-chat-channel`);
-
+  
     const handleNewMessage = (data) => {
+      console.log("New message received from Pusher:", data);
       if (data.broadcast_id === broadcastId) {
         setMessages((prevMessages) => {
           const messagesSet = new Map(
             prevMessages.map((msg) => [msg.created_at + msg.message_text, msg])
           );
-
-          // Hanya tambahkan jika belum ada
+  
           if (!messagesSet.has(data.created_at + data.message_text)) {
             messagesSet.set(data.created_at + data.message_text, data);
           }
-
+  
           return Array.from(messagesSet.values()).sort(
             (a, b) => new Date(a.created_at) - new Date(b.created_at)
           );
         });
+  
         scrollToBottom();
       }
     };
-
-    channel.unbind("broadcast-message-sent", handleNewMessage);
+  
     channel.bind("broadcast-message-sent", handleNewMessage);
-
+  
     return () => {
       channel.unbind("broadcast-message-sent", handleNewMessage);
       channel.unsubscribe();
     };
   }, [broadcastId]);
+  
 
   const sendMessage = async (e) => {
     e.preventDefault();
