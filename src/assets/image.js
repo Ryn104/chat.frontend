@@ -29,6 +29,7 @@ import side from './image/side.png'
 import email from './image/email.png'
 import classs from './image/classs.png'
 import division from './image/division.png'
+import deleteperson from './image/delete-person.png'
 
 // Tambahkan impor lainnya di sini
 
@@ -64,6 +65,7 @@ const photos = {
   email,
   classs,
   division,
+  deleteperson,
 
 };
 

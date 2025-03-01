@@ -2,30 +2,63 @@ import React, { useState, useEffect } from "react";
 import photos from "../assets/image.js";
 
 const MemberList = ({ members, onAddMember, onRemoveMember }) => {
-    const [newMemberId, setNewMemberId] = useState("");
-  
-    return (
-      <div className="flex flex-col gap-4 w-full">
-        <h1 className="xl:text-2xl font-semibold">Members ({members.length})</h1>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newMemberId}
-            onChange={(e) => setNewMemberId(e.target.value)}
-            className="p-2 border border-gray-700 rounded"
-            placeholder="Masukkan ID User"
-          />
-          <button
-            onClick={() => onAddMember(newMemberId)}
-            className="p-2 bg-blue-500 text-white rounded"
-          >
-            Tambah Member
-          </button>
+  const [newMemberId, setNewMemberId] = useState("");
+
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="border-b border-gray-700 px-10 pb-5">
+        <div className="flex border-b pb-3 border-gray-700 w-full">
+          <div>
+            <p>Created by</p>
+            <h1 className="xl:text-lg font-semibold">Riyan Handriyana</h1>
+          </div>
         </div>
+        <div className="flex border-b mb-5 pb-3 border-gray-700 w-full pt-4">
+          <div>
+            <p>Created on</p>
+            <h1 className="xl:text-lg font-semibold">18/01/2025 12:54</h1>
+          </div>
+        </div>
+        <div className="flex justify-between gap-4 xl:gap-0">
+          <div className="">
+            <button className="btn btn-outline" onClick={() => setIsEditing(!isEditing)}>
+              <div className="flex xl:gap-3 gap-0">
+                <img src={photos.edit} alt="" className="w-6 h-6" />
+                <p className="self-center xl:text-lg text-md">Edit Group</p>
+              </div>
+            </button>
+          </div>
+          <div className="">
+            <button className="btn btn-outline btn-error self-center">
+              <div className="flex xl:gap-3 gap-0">
+                <img src={photos.dellete} alt="" className="self-center w-6 h-6" />
+                <p className="self-center xl:text-lg text-md">Delete Group</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-3 px-10">
+        <input
+          type="text"
+          value={newMemberId}
+          onChange={(e) => setNewMemberId(e.target.value)}
+          className="input input-bordered w-full"
+          placeholder="Masukkan ID User"
+        />
+        <button
+          onClick={() => onAddMember(newMemberId)}
+          className="flex justify-center px-5 btn"
+        >
+          <img src={photos.adduser} alt="" className="self-center w-6 h-6" />
+        </button>
+      </div>
+      <h1 className="xl:text-2xl font-semibold px-10">Members ({members.length})</h1>
+      <div className="overflow-x-auto max-h-[100vw]">
         {members.map((member) => (
           <div
             key={member.id}
-            className="p-4 border-b border-gray-700 flex items-center gap-4"
+            className="p-4 border-b border-gray-700 flex items-center gap-4 mx-10"
           >
             <img
               src={member.img || photos.Nun}
@@ -40,15 +73,16 @@ const MemberList = ({ members, onAddMember, onRemoveMember }) => {
             </div>
             <button
               onClick={() => onRemoveMember(member.id)}
-              className="ml-auto p-2 bg-red-500 text-white rounded"
+              className="ml-auto p-2 text-white rounded"
             >
-              Hapus
+              <img src={photos.deleteperson} alt="" className="w-8 h-8" />
             </button>
           </div>
         ))}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 const Description = ({ onBackDesc }) => {
   const GroupName = localStorage.getItem("GroupName") || "Unknown";
@@ -75,41 +109,41 @@ const Description = ({ onBackDesc }) => {
     }
 
     const fetchGroupMembers = async () => {
-        try {
-          setError(null);
-          setLoading(true);
-          const response = await fetch(
-            `http://127.0.0.1:8000/api/chat/group/data/${GroupId}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-      
-          if (!response.ok) {
-            throw new Error("Gagal mengambil data");
+      try {
+        setError(null);
+        setLoading(true);
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/chat/group/data/${GroupId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-      
-          const data = await response.json();
-          console.log("🔍 Data dari API:", data);
-      
-          if (data.members && Array.isArray(data.members)) {
-            setMembers(data.members);
-          } else {
-            throw new Error("Format data tidak sesuai");
-          }
-      
-          setGroupDescription(data.description || "tidak ada deskripsi");
-          setEditDescription(data.description || "tidak ada deskripsi");
-        } catch (error) {
-          console.error("❌ Error fetching members:", error);
-          setError(error.message);
-        } finally {
-          setLoading(false);
+        );
+
+        if (!response.ok) {
+          throw new Error("Gagal mengambil data");
         }
-      };
+
+        const data = await response.json();
+        console.log("🔍 Data dari API:", data);
+
+        if (data.members && Array.isArray(data.members)) {
+          setMembers(data.members);
+        } else {
+          throw new Error("Format data tidak sesuai");
+        }
+
+        setGroupDescription(data.description || "tidak ada deskripsi");
+        setEditDescription(data.description || "tidak ada deskripsi");
+      } catch (error) {
+        console.error("❌ Error fetching members:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchGroupMembers();
   }, [GroupId, token]);
@@ -180,10 +214,10 @@ const Description = ({ onBackDesc }) => {
 
       // Redirect atau lakukan sesuatu setelah grup dihapus
       // Redirect ke halaman grup
-    window.location.href = "/group"; // Ganti dengan path halaman grup Anda
-    // atau
-    // window.location.reload(); // Jika ingin me-refresh halaman saat ini
-    onBackDesc()
+      window.location.href = "/group"; // Ganti dengan path halaman grup Anda
+      // atau
+      // window.location.reload(); // Jika ingin me-refresh halaman saat ini
+      onBackDesc()
     } catch (error) {
       console.error("❌ Error deleting group:", error);
     }
@@ -202,14 +236,14 @@ const Description = ({ onBackDesc }) => {
           body: JSON.stringify({ user_id: userId }),
         }
       );
-  
+
       const data = await response.json();
       console.log("✅ Response API:", data);
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Gagal menambahkan member");
       }
-  
+
       // Refresh member list setelah menambahkan member
       fetchGroupMembers();
     } catch (error) {
@@ -230,14 +264,14 @@ const Description = ({ onBackDesc }) => {
           body: JSON.stringify({ user_id: userId }),
         }
       );
-  
+
       const data = await response.json();
       console.log("✅ Response API:", data);
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Gagal menghapus member");
       }
-  
+
       // Refresh member list setelah menghapus member
       fetchGroupMembers();
     } catch (error) {
@@ -281,7 +315,7 @@ const Description = ({ onBackDesc }) => {
             </div>
           </div>
         </div>
-  
+
         {/* Form Edit Grup */}
         {isEditing && (
           <div className="px-10">
@@ -313,9 +347,9 @@ const Description = ({ onBackDesc }) => {
             </form>
           </div>
         )}
-  
+
         {/* Daftar Member */}
-        <div className="flex px-10">
+        <div className="flex">
           <MemberList
             members={members}
             onAddMember={handleAddMember}
@@ -323,7 +357,7 @@ const Description = ({ onBackDesc }) => {
           />
         </div>
       </div>
-  
+
       {/* Modal Hapus Grup */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
