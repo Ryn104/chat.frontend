@@ -1,93 +1,13 @@
 import React, { useState, useEffect } from "react";
 import photos from "../assets/image.js";
 
-const MemberList = ({ members, onAddMember, onRemoveMember }) => {
-  const [newMemberId, setNewMemberId] = useState("");
-
-  return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="border-b border-gray-700 px-10 pb-5">
-        <div className="flex border-b pb-3 border-gray-700 w-full">
-          <div>
-            <p>Created by</p>
-            <h1 className="xl:text-lg font-semibold">Riyan Handriyana</h1>
-          </div>
-        </div>
-        <div className="flex border-b mb-5 pb-3 border-gray-700 w-full pt-4">
-          <div>
-            <p>Created on</p>
-            <h1 className="xl:text-lg font-semibold">18/01/2025 12:54</h1>
-          </div>
-        </div>
-        <div className="flex justify-between gap-4 xl:gap-0">
-          <div className="">
-            <button className="btn btn-outline" onClick={() => setIsEditing(!isEditing)}>
-              <div className="flex xl:gap-3 gap-0">
-                <img src={photos.edit} alt="" className="w-6 h-6" />
-                <p className="self-center xl:text-lg text-md">Edit Group</p>
-              </div>
-            </button>
-          </div>
-          <div className="">
-            <button className="btn btn-outline btn-error self-center">
-              <div className="flex xl:gap-3 gap-0">
-                <img src={photos.dellete} alt="" className="self-center w-6 h-6" />
-                <p className="self-center xl:text-lg text-md">Delete Group</p>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="flex gap-3 px-10">
-        <input
-          type="text"
-          value={newMemberId}
-          onChange={(e) => setNewMemberId(e.target.value)}
-          className="input input-bordered w-full"
-          placeholder="Masukkan ID User"
-        />
-        <button
-          onClick={() => onAddMember(newMemberId)}
-          className="flex justify-center px-5 btn"
-        >
-          <img src={photos.adduser} alt="" className="self-center w-6 h-6" />
-        </button>
-      </div>
-      <h1 className="xl:text-2xl font-semibold px-10">Members ({members.length})</h1>
-      <div className="overflow-x-auto max-h-[100vw]">
-        {members.map((member) => (
-          <div
-            key={member.id}
-            className="p-4 border-b border-gray-700 flex items-center gap-4 mx-10"
-          >
-            <img
-              src={member.img || photos.Nun}
-              alt={member.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <p className="font-semibold">{member.name}</p>
-              <p className="text-sm text-gray-500">
-                {member.divisi} - {member.kelas}
-              </p>
-            </div>
-            <button
-              onClick={() => onRemoveMember(member.id)}
-              className="ml-auto p-2 text-white rounded"
-            >
-              <img src={photos.deleteperson} alt="" className="w-8 h-8" />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const Description = ({ onBackDesc }) => {
   const GroupName = localStorage.getItem("GroupName") || "Unknown";
   const GroupImg = localStorage.getItem("GroupImg") || photos.defaultGroupImage;
   const GroupId = localStorage.getItem("GroupId");
+  const GroupAdmin = localStorage.getItem("GroupAdmin");
+  const GroupAdminId = localStorage.getItem("GroupAdminId");
+  const GroupDibuat = localStorage.getItem("GroupDibuat");
   const token = localStorage.getItem("authToken");
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,6 +20,82 @@ const Description = ({ onBackDesc }) => {
   const [editImage, setEditImage] = useState(null);
   const [editDescription, setEditDescription] = useState(groupDescription);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState([]); // Pastikan ini diisi dengan data yang benar
+  const [contacts, setContacts] = useState([]);
+  const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  
+  const fetchGroupMembers = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/chat/group/data/${GroupId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Gagal mengambil data");
+      }
+
+      const data = await response.json();
+      console.log("🔍 Data dari API:", data);
+      localStorage.setItem("GroupAdmin", data.owner.name);
+      localStorage.setItem("GroupDibuat", data.created_at);
+
+      if (data.members && Array.isArray(data.members)) {
+        setMembers(data.members);
+      } else {
+        throw new Error("Format data tidak sesuai");
+      }
+
+      setGroupDescription(data.description || "tidak ada deskripsi");
+      setEditDescription(data.description || "tidak ada deskripsi");
+    } catch (error) {
+      console.error("❌ Error fetching members:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCurrentUser = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(`http://127.0.0.1:8000/api/user`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Gagal mengambil data");
+      }
+  
+      const data = await response.json();
+      setCurrentUser(data); // Simpan data pengguna ke state
+    } catch (error) {
+      console.error("❌ Error fetching:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const isAdmin = currentUser?.role === "admin";
 
   useEffect(() => {
     if (!GroupId || !token) {
@@ -128,6 +124,9 @@ const Description = ({ onBackDesc }) => {
 
         const data = await response.json();
         console.log("🔍 Data dari API:", data);
+        localStorage.setItem("GroupAdmin", data.owner.name);
+        localStorage.setItem("GroupAdminId", data.owner.id);
+        localStorage.setItem("GroupDibuat", data.created_at);
 
         if (data.members && Array.isArray(data.members)) {
           setMembers(data.members);
@@ -147,6 +146,33 @@ const Description = ({ onBackDesc }) => {
 
     fetchGroupMembers();
   }, [GroupId, token]);
+
+  const fetchAvailableUsers = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/contact", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal mengambil data user");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setAvailableUsers(data || []); // Ensure data is an array
+    } catch (error) {
+      console.error("❌ Error fetching users:", error);
+      setAvailableUsers([]); // Set to empty array on error
+    }
+  };
+
+  // Gunakan useEffect untuk memanggil fetchAvailableUsers saat komponen pertama kali di-render
+  useEffect(() => {
+    fetchAvailableUsers();
+  }, []); // Dependency array kosong agar hanya dijalankan sekali
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -212,12 +238,7 @@ const Description = ({ onBackDesc }) => {
         throw new Error(data.message || "Gagal menghapus grup");
       }
 
-      // Redirect atau lakukan sesuatu setelah grup dihapus
-      // Redirect ke halaman grup
-      window.location.href = "/group"; // Ganti dengan path halaman grup Anda
-      // atau
-      // window.location.reload(); // Jika ingin me-refresh halaman saat ini
-      onBackDesc()
+      onBackDesc();
     } catch (error) {
       console.error("❌ Error deleting group:", error);
     }
@@ -245,7 +266,7 @@ const Description = ({ onBackDesc }) => {
       }
 
       // Refresh member list setelah menambahkan member
-      fetchGroupMembers();
+      await fetchGroupMembers(); // Pastikan ini adalah async/await
     } catch (error) {
       console.error("❌ Error adding member:", error);
     }
@@ -273,10 +294,220 @@ const Description = ({ onBackDesc }) => {
       }
 
       // Refresh member list setelah menghapus member
-      fetchGroupMembers();
+      await fetchGroupMembers(); // Pastikan ini adalah async/await
     } catch (error) {
       console.error("❌ Error removing member:", error);
     }
+  };
+
+  const UserModal = ({ users = [], onClose, onSelectUsers }) => {
+    const handleSelectRecipient = (userId) => {
+      setSelectedRecipients((prev) =>
+        prev.includes(userId)
+          ? prev.filter((id) => id !== userId)
+          : [...prev, userId]
+      );
+    };
+
+    const handleSubmit = () => {
+      onSelectUsers(selectedRecipients); // Kirim selectedRecipients ke parent
+      onClose();
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg w-96">
+          <h2 className="text-xl font-semibold mb-4">Pilih User</h2>
+          <div className="max-h-64 overflow-y-auto">
+            {users.map((user) => (
+              <div
+                key={user.user_id}
+                className="flex items-center gap-4 p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelectRecipient(user.user_id)}
+              >
+                <input
+                  type="checkbox"
+                  value={user.user_id}
+                  checked={selectedRecipients.includes(user.user_id)}
+                  onChange={() => handleSelectRecipient(user.user_id)}
+                />
+                <img
+                  src={user.img || photos.Nun}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full"
+                />
+                <p className="font-semibold">{user.name}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end gap-4 mt-4">
+            <button
+              onClick={onClose}
+              className="p-2 bg-gray-500 text-white rounded"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="p-2 bg-blue-500 text-white rounded"
+            >
+              Tambahkan
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const MemberList = ({ members, onAddMember, onRemoveMember, isAdmin }) => {
+    const [newMemberId, setNewMemberId] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showUserModal, setShowUserModal] = useState(false);
+
+    // Fungsi untuk menambahkan member
+    const handleAddMember = (userId) => {
+      if (isAdmin) {
+        onAddMember(userId);
+      } else {
+        alert("Hanya admin yang dapat menambahkan member.");
+      }
+    };
+
+    // Fungsi untuk menghapus member
+    const handleRemoveMember = (memberId) => {
+      if (isAdmin) {
+        onRemoveMember(memberId);
+      } else {
+        alert("Hanya admin yang dapat menghapus member.");
+      }
+    };
+
+    return (
+      <div className="flex flex-col gap-4 w-full">
+        {/* Bagian Informasi Grup */}
+        <div className="border-b border-gray-700 px-10 pb-5">
+          <div className="flex border-b pb-3 border-gray-700 w-full">
+            <div>
+              <p>Created by</p>
+              <h1 className="xl:text-lg font-semibold">{GroupAdmin}</h1>
+            </div>
+          </div>
+          <div className="flex border-b mb-5 pb-3 border-gray-700 w-full pt-4">
+            <div>
+              <p>Created on</p>
+              <h1 className="xl:text-lg font-semibold">{GroupDibuat}</h1>
+            </div>
+          </div>
+
+          {/* Tombol Edit dan Delete Group (hanya untuk admin) */}
+          {isAdmin && (
+            <div className="flex justify-between gap-4 xl:gap-0">
+              <div>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  <div className="flex xl:gap-3 gap-0">
+                    <img src={photos.edit} alt="" className="w-6 h-6" />
+                    <p className="self-center xl:text-lg text-md">Edit Group</p>
+                  </div>
+                </button>
+              </div>
+              <div>
+                <button
+                  className="btn btn-outline btn-error self-center"
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  <div className="flex xl:gap-3 gap-0">
+                    <img
+                      src={photos.dellete}
+                      alt=""
+                      className="self-center w-6 h-6"
+                    />
+                    <p className="self-center xl:text-lg text-md">
+                      Delete Group
+                    </p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Bagian Member */}
+        <div className="flex flex-col gap-4 w-full">
+          {/* Tombol Tambah Member (hanya untuk admin) */}
+          {isAdmin && (
+            <div className="flex gap-3 px-10">
+              <button
+                onClick={() => setShowUserModal(true)}
+                className="flex justify-center px-5 btn"
+              >
+                <img
+                  src={photos.adduser}
+                  alt=""
+                  className="self-center w-6 h-6"
+                />
+                <p className="self-center xl:text-lg text-md">Tambah Member</p>
+              </button>
+            </div>
+          )}
+
+          {/* Modal Pilih User */}
+          {showUserModal && (
+            <UserModal
+              users={availableUsers}
+              onClose={() => setShowUserModal(false)}
+              onSelectUsers={(selectedIds) => {
+                selectedIds.forEach((userId) => handleAddMember(userId));
+                setShowUserModal(false);
+              }}
+            />
+          )}
+
+          {/* Daftar Member */}
+          <h1 className="xl:text-2xl font-semibold px-10">
+            Members ({members.length})
+          </h1>
+          <div className="overflow-x-auto max-h-[100vw]">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="p-4 border-b border-gray-700 flex items-center gap-4 mx-10"
+              >
+                <img
+                  src={member.img || photos.Nun}
+                  alt={member.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div>
+                  <p className="font-semibold">{member.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {member.divisi} - {member.kelas}
+                  </p>
+                </div>
+                {/* Label "Owner" untuk admin */}
+                {member.id == GroupAdminId && (
+                  <span className="ml-auto bg-green-500 text-white px-2 py-1 rounded text-sm">
+                    Owner
+                  </span>
+                )}
+                {/* Tombol Hapus Member (hanya untuk admin) */}
+                {isAdmin && member.id != GroupAdminId && (
+                  <button
+                    onClick={() => handleRemoveMember(member.id)}
+                    className="ml-auto p-2 text-white rounded"
+                  >
+                    <img src={photos.deleteperson} alt="" className="w-8 h-8" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -304,12 +535,6 @@ const Description = ({ onBackDesc }) => {
             </div>
           </div>
           <div className="self-center flex gap-4">
-            <button onClick={() => setIsEditing(!isEditing)}>
-              <img src={photos.edit} alt="edit" className="w-10 h-10" />
-            </button>
-            <button onClick={() => setShowDeleteModal(true)}>
-              <img src={photos.dellete} alt="delete" className="w-10 h-10" />
-            </button>
             <div onClick={onBackDesc}>
               <img src={photos.back} alt="back" className="w-10 h-10" />
             </div>
@@ -354,6 +579,7 @@ const Description = ({ onBackDesc }) => {
             members={members}
             onAddMember={handleAddMember}
             onRemoveMember={handleRemoveMember}
+            isAdmin={isAdmin} // Contoh pengecekan role
           />
         </div>
       </div>
