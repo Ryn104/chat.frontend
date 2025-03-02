@@ -316,14 +316,14 @@ const Description = ({ onBackDesc }) => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg w-96">
-          <h2 className="text-xl font-semibold mb-4">Pilih User</h2>
+      <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-gray-800  p-6 rounded-lg w-96">
+          <h2 className="text-2xl font-semibold mb-4">Pilih User</h2>
           <div className="max-h-64 overflow-y-auto">
             {users.map((user) => (
               <div
                 key={user.user_id}
-                className="flex items-center gap-4 p-2 hover:bg-gray-100 cursor-pointer"
+                className="flex items-center gap-4 pl-5 py-2 hover:bg-gray-700 cursor-pointer rounded"
                 onClick={() => handleSelectRecipient(user.user_id)}
               >
                 <input
@@ -344,13 +344,13 @@ const Description = ({ onBackDesc }) => {
           <div className="flex justify-end gap-4 mt-4">
             <button
               onClick={onClose}
-              className="p-2 bg-gray-500 text-white rounded"
+              className="py-2 px-4 bg-gray-500 text-white rounded"
             >
               Batal
             </button>
             <button
               onClick={handleSubmit}
-              className="p-2 bg-blue-500 text-white rounded"
+              className="py-2 px-4 bg-blue-500 text-white rounded"
             >
               Tambahkan
             </button>
@@ -360,7 +360,7 @@ const Description = ({ onBackDesc }) => {
     );
   };
 
-  const MemberList = ({ members, onAddMember, onRemoveMember,  isAdminOrOwner }) => {
+  const MemberList = ({ members, onAddMember, onRemoveMember,  isAdminOrOwner, onEditToggle, onDeleteToggle }) => {
     const [newMemberId, setNewMemberId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -407,7 +407,7 @@ const Description = ({ onBackDesc }) => {
               <div>
                 <button
                   className="btn btn-outline"
-                  onClick={() => setIsEditing(!isEditing)}
+                  onClick={onEditToggle}
                 >
                   <div className="flex xl:gap-3 gap-0">
                     <img src={photos.edit} alt="" className="w-6 h-6" />
@@ -418,7 +418,7 @@ const Description = ({ onBackDesc }) => {
               <div>
                 <button
                   className="btn btn-outline btn-error self-center"
-                  onClick={() => setShowDeleteModal(true)}
+                  onClick={onDeleteToggle}
                 >
                   <div className="flex xl:gap-3 gap-0">
                     <img
@@ -471,7 +471,7 @@ const Description = ({ onBackDesc }) => {
           <h1 className="xl:text-2xl font-semibold px-10">
             Members ({members.length})
           </h1>
-          <div className="overflow-x-auto max-h-[100vw]">
+          <div className="overflow-x-auto max-h-[46vh] xl:max-h-[44vh]">
             {members.map((member) => (
               <div
                 key={member.id}
@@ -541,22 +541,21 @@ const Description = ({ onBackDesc }) => {
             </div>
           </div>
         </div>
-
         {/* Form Edit Grup */}
         {isEditing && (
-          <div className="px-10">
+          <div className="px-10 pb-5 mb-5 border-b border-gray-700">
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
               <input
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="p-2 border border-gray-700 rounded"
+                className="p-2 border border-gray-700 rounded input input-bordered flex items-center gap-2 w-full"
                 placeholder="Nama Grup"
               />
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                className="p-2 border border-gray-700 rounded"
+                className="p-2 border border-gray-700 rounded input input-bordered flex items-center gap-2 w-full"
                 placeholder="Deskripsi Grup"
               />
               <input
@@ -568,37 +567,40 @@ const Description = ({ onBackDesc }) => {
                 type="submit"
                 className="p-2 bg-blue-500 text-white rounded"
               >
-                Simpan Perubahan
+                Save Changes
               </button>
             </form>
           </div>
         )}
-
+  
         {/* Daftar Member */}
+
         <MemberList
           members={members}
           onAddMember={handleAddMember}
           onRemoveMember={handleRemoveMember}
           isAdminOrOwner={isAdmin || isOwner} // Properti baru yang sudah digabung
-        />
+          onEditToggle={() => setIsEditing(!isEditing)} 
+          onDeleteToggle={() => setShowDeleteModal(true)}
+          />
       </div>
 
       {/* Modal Hapus Grup */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg">
+        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-gray-800 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Hapus Grup</h2>
             <p className="mb-4">Apakah Anda yakin ingin menghapus grup ini?</p>
             <div className="flex justify-end gap-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="p-2 bg-gray-500 text-white rounded"
+                className="py-2 px-4 bg-gray-500 text-white rounded"
               >
                 Batal
               </button>
               <button
                 onClick={handleDeleteGroup}
-                className="p-2 bg-red-500 text-white rounded"
+                className="py-2 px-4 bg-red-500 text-white rounded"
               >
                 Hapus
               </button>
