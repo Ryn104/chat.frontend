@@ -6,7 +6,7 @@ const Description = ({ onBackDesc }) => {
   const GroupImg = localStorage.getItem("GroupImg") || photos.defaultGroupImage;
   const GroupId = localStorage.getItem("GroupId");
   const GroupAdmin = localStorage.getItem("GroupAdmin");
-  const GroupAdminId = localStorage.getItem("GroupAdminId");
+  const GroupAdminId = parseInt(localStorage.getItem("GroupAdminId")) || null;
   const GroupDibuat = localStorage.getItem("GroupDibuat");
   const token = localStorage.getItem("authToken");
   const [members, setMembers] = useState([]);
@@ -26,7 +26,7 @@ const Description = ({ onBackDesc }) => {
   const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
-  
+
   const fetchGroupMembers = async () => {
     try {
       setError(null);
@@ -76,11 +76,11 @@ const Description = ({ onBackDesc }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Gagal mengambil data");
       }
-  
+
       const data = await response.json();
       setCurrentUser(data); // Simpan data pengguna ke state
     } catch (error) {
@@ -96,6 +96,7 @@ const Description = ({ onBackDesc }) => {
   }, []);
 
   const isAdmin = currentUser?.role === "admin";
+  const isOwner = currentUser?.id === GroupAdminId; 
 
   useEffect(() => {
     if (!GroupId || !token) {
@@ -359,7 +360,7 @@ const Description = ({ onBackDesc }) => {
     );
   };
 
-  const MemberList = ({ members, onAddMember, onRemoveMember, isAdmin }) => {
+  const MemberList = ({ members, onAddMember, onRemoveMember,  isAdminOrOwner }) => {
     const [newMemberId, setNewMemberId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -367,7 +368,7 @@ const Description = ({ onBackDesc }) => {
 
     // Fungsi untuk menambahkan member
     const handleAddMember = (userId) => {
-      if (isAdmin) {
+      if (isAdminOrOwner) {
         onAddMember(userId);
       } else {
         alert("Hanya admin yang dapat menambahkan member.");
@@ -376,7 +377,7 @@ const Description = ({ onBackDesc }) => {
 
     // Fungsi untuk menghapus member
     const handleRemoveMember = (memberId) => {
-      if (isAdmin) {
+      if (isAdminOrOwner) {
         onRemoveMember(memberId);
       } else {
         alert("Hanya admin yang dapat menghapus member.");
@@ -386,14 +387,14 @@ const Description = ({ onBackDesc }) => {
     return (
       <div className="flex flex-col gap-4 w-full">
         {/* Bagian Informasi Grup */}
-        <div className="border-b border-gray-700 px-10 pb-5">
+        <div className="border-b border-gray-700 px-10 pb-2">
           <div className="flex border-b pb-3 border-gray-700 w-full">
             <div>
               <p>Created by</p>
               <h1 className="xl:text-lg font-semibold">{GroupAdmin}</h1>
             </div>
           </div>
-          <div className="flex border-b mb-5 pb-3 border-gray-700 w-full pt-4">
+          <div className="flex  pb-3 w-full pt-4">
             <div>
               <p>Created on</p>
               <h1 className="xl:text-lg font-semibold">{GroupDibuat}</h1>
@@ -401,8 +402,8 @@ const Description = ({ onBackDesc }) => {
           </div>
 
           {/* Tombol Edit dan Delete Group (hanya untuk admin) */}
-          {isAdmin && (
-            <div className="flex justify-between gap-4 xl:gap-0">
+          {isAdminOrOwner && (
+            <div className="flex justify-between gap-4 xl:gap-0 border-t border-gray-700 pt-5 pb-3">
               <div>
                 <button
                   className="btn btn-outline"
@@ -438,7 +439,7 @@ const Description = ({ onBackDesc }) => {
         {/* Bagian Member */}
         <div className="flex flex-col gap-4 w-full">
           {/* Tombol Tambah Member (hanya untuk admin) */}
-          {isAdmin && (
+          {isAdminOrOwner && (
             <div className="flex gap-3 px-10">
               <button
                 onClick={() => setShowUserModal(true)}
@@ -494,7 +495,7 @@ const Description = ({ onBackDesc }) => {
                   </span>
                 )}
                 {/* Tombol Hapus Member (hanya untuk admin) */}
-                {isAdmin && member.id != GroupAdminId && (
+                {isAdminOrOwner && member.id != GroupAdminId && (
                   <button
                     onClick={() => handleRemoveMember(member.id)}
                     className="ml-auto p-2 text-white rounded"
@@ -574,14 +575,12 @@ const Description = ({ onBackDesc }) => {
         )}
 
         {/* Daftar Member */}
-        <div className="flex">
-          <MemberList
-            members={members}
-            onAddMember={handleAddMember}
-            onRemoveMember={handleRemoveMember}
-            isAdmin={isAdmin} // Contoh pengecekan role
-          />
-        </div>
+        <MemberList
+          members={members}
+          onAddMember={handleAddMember}
+          onRemoveMember={handleRemoveMember}
+          isAdminOrOwner={isAdmin || isOwner} // Properti baru yang sudah digabung
+        />
       </div>
 
       {/* Modal Hapus Grup */}
