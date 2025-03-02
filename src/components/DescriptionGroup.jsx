@@ -96,7 +96,7 @@ const Description = ({ onBackDesc }) => {
   }, []);
 
   const isAdmin = currentUser?.role === "admin";
-  const isOwner = currentUser?.id === GroupAdminId; 
+  const isOwner = currentUser?.id === GroupAdminId;
 
   useEffect(() => {
     if (!GroupId || !token) {
@@ -360,7 +360,7 @@ const Description = ({ onBackDesc }) => {
     );
   };
 
-  const MemberList = ({ members, onAddMember, onRemoveMember,  isAdminOrOwner, onEditToggle, onDeleteToggle }) => {
+  const MemberList = ({ members, onAddMember, onRemoveMember, isAdminOrOwner, onEditToggle, onDeleteToggle }) => {
     const [newMemberId, setNewMemberId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -471,7 +471,8 @@ const Description = ({ onBackDesc }) => {
           <h1 className="xl:text-2xl font-semibold px-10">
             Members ({members.length})
           </h1>
-          <div className="overflow-x-auto max-h-[46vh] xl:max-h-[44vh]">
+          <div className={`overflow-x-auto ${isAdminOrOwner ? "xl:max-h-[44vh] max-h-[45vh]" : "xl:max-h-[59vh] max-h-[61vh]"
+            }`}>
             {members.map((member) => (
               <div
                 key={member.id}
@@ -572,7 +573,7 @@ const Description = ({ onBackDesc }) => {
             </form>
           </div>
         )}
-  
+
         {/* Daftar Member */}
 
         <MemberList
@@ -580,9 +581,9 @@ const Description = ({ onBackDesc }) => {
           onAddMember={handleAddMember}
           onRemoveMember={handleRemoveMember}
           isAdminOrOwner={isAdmin || isOwner} // Properti baru yang sudah digabung
-          onEditToggle={() => setIsEditing(!isEditing)} 
+          onEditToggle={() => setIsEditing(!isEditing)}
           onDeleteToggle={() => setShowDeleteModal(true)}
-          />
+        />
       </div>
 
       {/* Modal Hapus Grup */}
