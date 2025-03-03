@@ -22,42 +22,42 @@ const Reg = () => {
     setError('');
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                kelas,
-                divisi,
-                password,
-                password_confirmation: passwordConfirmation,
-            }),
-        });
+      const response = await fetch('http://127.0.0.1:8000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          kelas,
+          divisi,
+          password,
+          password_confirmation: passwordConfirmation,
+        }),
+      });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            toast.error("Gagal membuat user");
-            throw new Error(errorData.message || 'Registration failed');
-        }
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error("Gagal membuat user");
+        throw new Error(errorData.message || 'Registration failed');
+      }
 
-        const data = await response.json();
-        toast.success("Berhasil membuat user");
-        console.log('Registration successful:', data);
+      const data = await response.json();
+      toast.success("Berhasil membuat user");
+      console.log('Registration successful:', data);
 
-        // Tunda navigate selama 1 detik untuk memastikan toast ditampilkan
-        setTimeout(() => {
-            navigate('/login');
-        }, 2000); // 1000 ms = 1 detik
+      // Tunda navigate selama 1 detik untuk memastikan toast ditampilkan
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000); // 1000 ms = 1 detik
     } catch (err) {
-        setError(err.message);
-        toast.error(err.message); // Tampilkan error menggunakan toast
+      setError(err.message);
+      toast.error(err.message); // Tampilkan error menggunakan toast
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div className="bg-base-200 xl:min-h-screen">

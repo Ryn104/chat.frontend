@@ -1,12 +1,13 @@
 import photos from "../assets/image.js";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const SideBar = ({ collapsed, toggleCollapsed }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("authToken");
   const [userName, setUserName] = useState("Loading...");
   const [userImg, setUserImg] = useState("Loading...");
@@ -15,6 +16,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", divisi: "", kelas: "", img: null });
+  const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");// Ganti dengan token yang sesuai
@@ -54,7 +56,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     e.preventDefault();
     const authToken = localStorage.getItem("authToken");
     const formDataToSend = new FormData();
-  
+
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("divisi", formData.divisi);
@@ -62,9 +64,9 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     if (formData.img) {
       formDataToSend.append("img", formData.img);
     }
-  
+
     formDataToSend.append("_method", "PUT");
-  
+
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
         method: "POST",
@@ -73,14 +75,14 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
         },
         body: formDataToSend,
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to update user data");
       }
-  
+
       const data = await response.json();
       console.log("API Response:", data); // Debugging
-  
+
       // Update the user state with the new data
       setUser(data.user);
       setEditing(false);
@@ -152,8 +154,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                         </div>
                         <div className="flex xl:justify-center mt-10">
                           <button
-                            className="xl:w-[7vw]"
-                            onClick={() => navigate('/private')} // Set ke Private
+                            className={`xl:w-[10vw] ${isActive('/private') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
+                            onClick={() => navigate('/private')}
                           >
                             <div className="flex pl-1">
                               <img
@@ -169,8 +171,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                         </div>
                         <div className="flex xl:justify-center mt-10">
                           <button
-                            className="xl:w-[7vw]"
-                            onClick={() => navigate('/group')}  // Set ke Group
+                            className={`xl:w-[10vw] ${isActive('/group') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
+                            onClick={() => navigate('/group')}
                           >
                             <div className="flex pl-1">
                               <img
@@ -185,8 +187,10 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                           </button>
                         </div>
                         <div className="flex xl:justify-center mt-10">
-                          <button className="xl:w-[7vw]"
-                            onClick={() => navigate('/broadcast')}>
+                          <button
+                            className={`xl:w-[10vw] ${isActive('/broadcast') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
+                            onClick={() => navigate('/broadcast')}
+                          >
                             <div className="flex pl-1">
                               <img
                                 src={photos.broadcast}
@@ -199,11 +203,30 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
+                        {user.role === 'admin' && ( // Hanya tambahkan kondisi ini
+                          <div className="flex xl:justify-center mt-10">
+                            <button
+                              className={`xl:w-[10vw] ${isActive('/dashboard') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
+                              onClick={() => navigate('/dashboard')}
+                            >
+                              <div className="flex pl-1">
+                                <img
+                                  src={photos.admin}
+                                  alt=""
+                                  className="xl:h-[25px] self-center mr-2 h-8"
+                                />
+                                <h1 className="xl:text-2xl text-xl self-center font-semibold">
+                                  Dashboard
+                                </h1>
+                              </div>
+                            </button>
+                          </div>
+                        )}
                       </div>
                       <div className="">
                         <div className="flex xl:justify-center">
                           <button className="xl:w-[7vw]"
-                          onClick={() => document.getElementById('setting').showModal()}>
+                            onClick={() => document.getElementById('setting').showModal()}>
                             <div className="flex pl-1">
                               <img
                                 src={photos.setting}
@@ -218,7 +241,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                         </div>
                         <div className="flex xl:justify-center mt-5">
                           <button className="xl:w-[7vw]"
-                          onClick={() => document.getElementById('user').showModal()}>
+                            onClick={() => document.getElementById('user').showModal()}>
                             <div className="flex pl-1">
                               <img
                                 src={user.img}
@@ -239,10 +262,10 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
             </div>
             <div className="flex justify-center mt-8">
               <button
-                className=""
-                onClick={() => navigate('/private')} // Set ke Private
+                className={`p-2 ${isActive('/private') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2  ' : ''}`}
+                onClick={() => navigate('/private')}
               >
-                <div className="flex xl:ml-4">
+                <div className="flex">
                   <img
                     src={photos.privates}
                     alt=""
@@ -253,10 +276,10 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
             </div>
             <div className="flex justify-center mt-8">
               <button
-                className=""
-                onClick={() => navigate('/group')} // Set ke Group
+                className={`p-2 ${isActive('/group') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2  ' : ''}`}
+                onClick={() => navigate('/group')}
               >
-                <div className="flex xl:ml-4">
+                <div className="flex">
                   <img
                     src={photos.group}
                     alt=""
@@ -266,9 +289,11 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
               </button>
             </div>
             <div className="flex justify-center mt-8">
-              <button className=""
-                onClick={() => navigate('/broadcast')}>
-                <div className="flex xl:ml-4">
+              <button
+                className={`p-2 ${isActive('/broadcast') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2' : ''}`}
+                onClick={() => navigate('/broadcast')}
+              >
+                <div className="flex">
                   <img
                     src={photos.broadcast}
                     alt=""
@@ -277,11 +302,27 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 </div>
               </button>
             </div>
+            {user.role === 'admin' && ( // Tambahkan kondisi ini
+              <div className="flex justify-center mt-8">
+                <button
+                  className={`p-2 ${isActive('/dashboard') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2  ' : ''}`}
+                  onClick={() => navigate('/dashboard')}
+                >
+                  <div className="flex">
+                    <img
+                      src={photos.admin}
+                      alt=""
+                      className="w-8 xl:w-8 self-center"
+                    />
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
           <div>
             <div className="flex justify-center">
               <button className="" onClick={() => document.getElementById('setting').showModal()}>
-                <div className="flex xl:ml-4">
+                <div className="flex">
                   <img
                     src={photos.setting}
                     alt=""
@@ -480,8 +521,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
           </div>
         </div>
       </div>
-       {/* Toast Container */}
-            <ToastContainer />
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };
