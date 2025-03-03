@@ -25,7 +25,7 @@ const Description = ({ onBackDesc }) => {
   const [contacts, setContacts] = useState([]);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-
+  const [userRole, setUserRole] = useState(null);
 
   const fetchGroupMembers = async () => {
     try {
@@ -48,6 +48,7 @@ const Description = ({ onBackDesc }) => {
       const data = await response.json();
       console.log("🔍 Data dari API:", data);
       localStorage.setItem("GroupAdmin", data.owner.name);
+      localStorage.setItem("GroupAdminId", data.owner.id);
       localStorage.setItem("GroupDibuat", data.created_at);
 
       if (data.members && Array.isArray(data.members)) {
@@ -81,8 +82,8 @@ const Description = ({ onBackDesc }) => {
         throw new Error("Gagal mengambil data");
       }
 
-      const data = await response.json();
-      setCurrentUser(data); // Simpan data pengguna ke state
+      const responseData = await response.json();
+      setCurrentUser(responseData.data); // Ambil 'data' dari response
     } catch (error) {
       console.error("❌ Error fetching:", error);
       setError(error.message);
@@ -97,6 +98,21 @@ const Description = ({ onBackDesc }) => {
 
   const isAdmin = currentUser?.role === "admin";
   const isOwner = currentUser?.id === GroupAdminId;
+  const isMentor = userRole === "mentor";
+  const isAdminRole = userRole === "admin";
+
+  const getUserRoleInGroup = (groupId) => {
+    if (!currentUser || !currentUser.groups) return null;
+  
+    const group = currentUser.groups.find((g) => g.group_id === parseInt(groupId, 10));
+    return group ? group.role : "not a member";
+  };
+  
+  useEffect(() => {
+    if (currentUser && GroupId) {
+      setUserRole(getUserRoleInGroup(GroupId));
+    }
+  }, [currentUser, GroupId]);
 
   useEffect(() => {
     if (!GroupId || !token) {
@@ -300,6 +316,41 @@ const Description = ({ onBackDesc }) => {
       console.error("❌ Error removing member:", error);
     }
   };
+  const handleChangeRole = async (userId, newRole) => {
+    if (!isAdmin && !isOwner && !isAdminRole) {
+      alert("Hanya admin atau owner yang dapat mengubah role.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/group/${GroupId}/update-role`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId, // Tambahkan user_id
+            role: newRole,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Response:", response, "Data:", data); // Debugging response
+
+      if (!response.ok) {
+        throw new Error(data.error || "Gagal mengubah role");
+      }
+
+      // Refresh daftar anggota setelah update
+      fetchGroupMembers();
+    } catch (error) {
+      console.error("❌ Error updating role:", error);
+    }
+  };
 
   const UserModal = ({ users = [], onClose, onSelectUsers }) => {
     const handleSelectRecipient = (userId) => {
@@ -360,30 +411,38 @@ const Description = ({ onBackDesc }) => {
     );
   };
 
-  const MemberList = ({ members, onAddMember, onRemoveMember, isAdminOrOwner, onEditToggle, onDeleteToggle }) => {
+  const MemberList = ({
+    members,
+    onAddMember,
+    onRemoveMember,
+    isAdminOrOwner,
+    isMentor, // Tambahkan prop isMentor
+    onEditToggle,
+    onDeleteToggle,
+  }) => {
     const [newMemberId, setNewMemberId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUserModal, setShowUserModal] = useState(false);
-
+  
     // Fungsi untuk menambahkan member
     const handleAddMember = (userId) => {
-      if (isAdminOrOwner) {
+      if (isAdminOrOwner || isMentor) {
         onAddMember(userId);
       } else {
-        alert("Hanya admin yang dapat menambahkan member.");
+        alert("Hanya admin atau mentor yang dapat menambahkan member.");
       }
     };
-
+  
     // Fungsi untuk menghapus member
     const handleRemoveMember = (memberId) => {
-      if (isAdminOrOwner) {
+      if (isAdminOrOwner || isMentor) {
         onRemoveMember(memberId);
       } else {
-        alert("Hanya admin yang dapat menghapus member.");
+        alert("Hanya admin atau mentor yang dapat menghapus member.");
       }
     };
-
+  
     return (
       <div className="flex flex-col gap-4 w-full">
         {/* Bagian Informasi Grup */}
@@ -400,15 +459,12 @@ const Description = ({ onBackDesc }) => {
               <h1 className="xl:text-lg font-semibold">{GroupDibuat}</h1>
             </div>
           </div>
-
+  
           {/* Tombol Edit dan Delete Group (hanya untuk admin) */}
           {isAdminOrOwner && (
             <div className="flex justify-between gap-4 xl:gap-0 border-t border-gray-700 pt-5 pb-3">
               <div>
-                <button
-                  className="btn btn-outline"
-                  onClick={onEditToggle}
-                >
+                <button className="btn btn-outline" onClick={onEditToggle}>
                   <div className="flex xl:gap-3 gap-0">
                     <img src={photos.edit} alt="" className="w-6 h-6" />
                     <p className="self-center xl:text-lg text-md">Edit Group</p>
@@ -435,11 +491,11 @@ const Description = ({ onBackDesc }) => {
             </div>
           )}
         </div>
-
+  
         {/* Bagian Member */}
         <div className="flex flex-col gap-4 w-full">
-          {/* Tombol Tambah Member (hanya untuk admin) */}
-          {isAdminOrOwner && (
+          {/* Tombol Tambah Member (hanya untuk admin atau mentor) */}
+          {(isAdminOrOwner || isMentor) && (
             <div className="flex gap-3 px-10">
               <button
                 onClick={() => setShowUserModal(true)}
@@ -454,7 +510,7 @@ const Description = ({ onBackDesc }) => {
               </button>
             </div>
           )}
-
+  
           {/* Modal Pilih User */}
           {showUserModal && (
             <UserModal
@@ -466,13 +522,18 @@ const Description = ({ onBackDesc }) => {
               }}
             />
           )}
-
+  
           {/* Daftar Member */}
           <h1 className="xl:text-2xl font-semibold px-10">
             Members ({members.length})
           </h1>
-          <div className={`overflow-x-auto ${isAdminOrOwner ? "xl:max-h-[44vh] max-h-[45vh]" : "xl:max-h-[59vh] max-h-[61vh]"
-            }`}>
+          <div
+            className={`overflow-x-auto ${
+              isAdminOrOwner
+                ? "xl:max-h-[44vh] max-h-[45vh]"
+                : "xl:max-h-[59vh] max-h-[61vh]"
+            }`}
+          >
             {members.map((member) => (
               <div
                 key={member.id}
@@ -495,14 +556,32 @@ const Description = ({ onBackDesc }) => {
                     Owner
                   </span>
                 )}
-                {/* Tombol Hapus Member (hanya untuk admin) */}
-                {isAdminOrOwner && member.id != GroupAdminId && (
+                {member.role === "mentor" && member.id !== GroupAdminId && (
+                <span className="ml-auto bg-blue-500 text-white px-2 py-1 rounded text-sm">
+                  Mentor
+                </span>
+              )}
+                {/* Tombol Hapus Member (hanya untuk admin atau mentor) */}
+                {(isAdminOrOwner || isMentor) && member.id != GroupAdminId && (
                   <button
                     onClick={() => handleRemoveMember(member.id)}
                     className="ml-auto p-2 text-white rounded"
                   >
                     <img src={photos.deleteperson} alt="" className="w-8 h-8" />
                   </button>
+                )}
+                {isAdminOrOwner && member.id !== GroupAdminId && (
+                  <select
+                    value={member.role}
+                    onChange={(e) =>
+                      handleChangeRole(member.id, e.target.value)
+                    }
+                    className="ml-auto bg-gray-800 text-white px-2 py-1 rounded text-sm"
+                  >
+                    <option value="member">Member</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 )}
               </div>
             ))}
@@ -580,8 +659,9 @@ const Description = ({ onBackDesc }) => {
           members={members}
           onAddMember={handleAddMember}
           onRemoveMember={handleRemoveMember}
-          isAdminOrOwner={isAdmin || isOwner} // Properti baru yang sudah digabung
+          isAdminOrOwner={isAdmin || isOwner || isAdminRole} // Properti baru yang sudah digabung
           onEditToggle={() => setIsEditing(!isEditing)}
+          isMentor={isMentor}
           onDeleteToggle={() => setShowDeleteModal(true)}
         />
       </div>
