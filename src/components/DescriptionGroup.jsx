@@ -97,9 +97,13 @@ const Description = ({ onBackDesc }) => {
   }, []);
 
   const isAdmin = currentUser?.role === "admin";
+  const isMentor = currentUser?.role === "mentor";
   const isOwner = currentUser?.id === GroupAdminId;
-  const isMentor = userRole === "mentor";
+  const isMentorRole = userRole === "mentor";
   const isAdminRole = userRole === "admin";
+
+
+  console.log(isMentor)
 
   const getUserRoleInGroup = (groupId) => {
     if (!currentUser || !currentUser.groups) return null;
@@ -661,7 +665,7 @@ const Description = ({ onBackDesc }) => {
           onRemoveMember={handleRemoveMember}
           isAdminOrOwner={isAdmin || isOwner || isAdminRole} // Properti baru yang sudah digabung
           onEditToggle={() => setIsEditing(!isEditing)}
-          isMentor={isMentor}
+          isMentor={isMentor || isMentorRole}
           onDeleteToggle={() => setShowDeleteModal(true)}
         />
       </div>

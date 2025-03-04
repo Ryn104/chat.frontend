@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const SideBar = ({ collapsed, toggleCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const UserId = localStorage.getItem("UserId");
   const token = localStorage.getItem("authToken");
   const [userName, setUserName] = useState("Loading...");
   const [userImg, setUserImg] = useState("Loading...");
@@ -19,8 +20,8 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");// Ganti dengan token yang sesuai
-
+    const authToken = localStorage.getItem("authToken"); // Ganti dengan token yang sesuai
+  
     fetch("http://127.0.0.1:8000/api/user", {
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -33,8 +34,9 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
         return response.json();
       })
       .then((data) => {
+        console.log("Fetched User Data:", data); // Debugging
+        localStorage.setItem("UserId", data.data.id)
         setUser(data);
-        console.log(data)
         setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: data.img });
         setLoading(false);
       })
@@ -43,6 +45,9 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
         setLoading(false);
       });
   }, []);
+
+  
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,7 +61,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     e.preventDefault();
     const authToken = localStorage.getItem("authToken");
     const formDataToSend = new FormData();
-
+  
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("divisi", formData.divisi);
@@ -64,25 +69,30 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
     if (formData.img) {
       formDataToSend.append("img", formData.img);
     }
-
+  
     formDataToSend.append("_method", "PUT");
-
+  
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
+      // Pastikan user sudah diatur sebelum mengakses user.id
+      if (!UserId) {
+        throw new Error("User data is not available");
+      }
+  
+      const response = await fetch(`http://127.0.0.1:8000/api/users/${UserId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
         body: formDataToSend,
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to update user data");
       }
-
+  
       const data = await response.json();
       console.log("API Response:", data); // Debugging
-
+  
       // Update the user state with the new data
       setUser(data.user);
       setEditing(false);
@@ -203,7 +213,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
-                        {user.role === 'admin' && ( // Hanya tambahkan kondisi ini
+                        {user.data.role === 'admin' && ( // Hanya tambahkan kondisi ini
                           <div className="flex xl:justify-center mt-10">
                             <button
                               className={`xl:w-[10vw] ${isActive('/dashboard') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
@@ -244,12 +254,12 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             onClick={() => document.getElementById('user').showModal()}>
                             <div className="flex pl-1">
                               <img
-                                src={user.img}
+                                src={user.data.img}
                                 alt=""
                                 className="xl:h-[50px] h-12 w-12 rounded-full self-center mr-2"
                               />
                               <h1 className="xl:text-2xl text-xl text-left self-center font-semibold">
-                                {user.name}
+                                {user.data.name}
                               </h1>
                             </div>
                           </button>
@@ -302,7 +312,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 </div>
               </button>
             </div>
-            {user.role === 'admin' && ( // Tambahkan kondisi ini
+            {user.data.role === 'admin' && ( // Tambahkan kondisi ini
               <div className="flex justify-center mt-8">
                 <button
                   className={`p-2 ${isActive('/dashboard') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2  ' : ''}`}
@@ -441,7 +451,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 onClick={() => document.getElementById('user').showModal()}>
                 <div className="flex">
                   <img
-                    src={user.img}
+                    src={user.data.img}
                     alt=""
                     className="w-10 xl:w-12 xl:h-12 rounded-full self-center"
                   />
@@ -489,14 +499,14 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 ) : (
                   <>
                     <img
-                      src={user.img} // Use the full URL returned by the backend
+                      src={user.data.img} // Use the full URL returned by the backend
                       alt="User Avatar"
                       className="w-24 h-24 rounded-full mx-auto"
                     />
-                    <h2 className="text-xl font-bold text-center">{user.name}</h2>
-                    <p className="text-gray-600 text-center">Email: {user.email}</p>
-                    <p className="text-gray-600 text-center">Kelas: {user.kelas}</p>
-                    <p className="text-gray-600 text-center">Divisi: {user.divisi}</p>
+                    <h2 className="text-xl font-bold text-center">{user.data.name}</h2>
+                    <p className="text-gray-600 text-center">Email: {user.data.email}</p>
+                    <p className="text-gray-600 text-center">Kelas: {user.data.kelas}</p>
+                    <p className="text-gray-600 text-center">Divisi: {user.data.divisi}</p>
                     <div className="flex justify-end align-middle gap-3">
                       <div className="flex pt-6">
                         <button
