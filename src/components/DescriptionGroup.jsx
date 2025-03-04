@@ -102,9 +102,6 @@ const Description = ({ onBackDesc }) => {
   const isMentorRole = userRole === "mentor";
   const isAdminRole = userRole === "admin";
 
-
-  console.log(isMentor)
-
   const getUserRoleInGroup = (groupId) => {
     if (!currentUser || !currentUser.groups) return null;
   
