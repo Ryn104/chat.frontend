@@ -104,11 +104,13 @@ const Description = ({ onBackDesc }) => {
 
   const getUserRoleInGroup = (groupId) => {
     if (!currentUser || !currentUser.groups) return null;
-  
-    const group = currentUser.groups.find((g) => g.group_id === parseInt(groupId, 10));
+
+    const group = currentUser.groups.find(
+      (g) => g.group_id === parseInt(groupId, 10)
+    );
     return group ? group.role : "not a member";
   };
-  
+
   useEffect(() => {
     if (currentUser && GroupId) {
       setUserRole(getUserRoleInGroup(GroupId));
@@ -425,7 +427,7 @@ const Description = ({ onBackDesc }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUserModal, setShowUserModal] = useState(false);
-  
+
     // Fungsi untuk menambahkan member
     const handleAddMember = (userId) => {
       if (isAdminOrOwner || isMentor) {
@@ -434,7 +436,7 @@ const Description = ({ onBackDesc }) => {
         alert("Hanya admin atau mentor yang dapat menambahkan member.");
       }
     };
-  
+
     // Fungsi untuk menghapus member
     const handleRemoveMember = (memberId) => {
       if (isAdminOrOwner || isMentor) {
@@ -443,7 +445,7 @@ const Description = ({ onBackDesc }) => {
         alert("Hanya admin atau mentor yang dapat menghapus member.");
       }
     };
-  
+
     return (
       <div className="flex flex-col gap-4 w-full">
         {/* Bagian Informasi Grup */}
@@ -460,7 +462,7 @@ const Description = ({ onBackDesc }) => {
               <h1 className="xl:text-lg font-semibold">{GroupDibuat}</h1>
             </div>
           </div>
-  
+
           {/* Tombol Edit dan Delete Group (hanya untuk admin) */}
           {isAdminOrOwner && (
             <div className="flex justify-between gap-4 xl:gap-0 border-t border-gray-700 pt-5 pb-3">
@@ -492,7 +494,7 @@ const Description = ({ onBackDesc }) => {
             </div>
           )}
         </div>
-  
+
         {/* Bagian Member */}
         <div className="flex flex-col gap-4 w-full">
           {/* Tombol Tambah Member (hanya untuk admin atau mentor) */}
@@ -511,7 +513,7 @@ const Description = ({ onBackDesc }) => {
               </button>
             </div>
           )}
-  
+
           {/* Modal Pilih User */}
           {showUserModal && (
             <UserModal
@@ -523,7 +525,7 @@ const Description = ({ onBackDesc }) => {
               }}
             />
           )}
-  
+
           {/* Daftar Member */}
           <h1 className="xl:text-2xl font-semibold px-10">
             Members ({members.length})
@@ -557,11 +559,13 @@ const Description = ({ onBackDesc }) => {
                     Owner
                   </span>
                 )}
-                {member.role === "mentor" && member.id !== GroupAdminId && (
-                <span className="ml-auto bg-blue-500 text-white px-2 py-1 rounded text-sm">
-                  Mentor
-                </span>
-              )}
+                {member.role === "mentor" ||
+                  member.id !== GroupAdminId &&
+                  isMentor && (
+                    <span className="ml-auto bg-blue-500 text-white px-2 py-1 rounded text-sm">
+                      Mentor
+                    </span>
+                  )}
                 {/* Tombol Hapus Member (hanya untuk admin atau mentor) */}
                 {(isAdminOrOwner || isMentor) && member.id != GroupAdminId && (
                   <button

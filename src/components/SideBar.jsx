@@ -9,6 +9,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const UserId = localStorage.getItem("UserId");
+  const Role = localStorage.getItem("Role");
   const token = localStorage.getItem("authToken");
   const [userName, setUserName] = useState("Loading...");
   const [userImg, setUserImg] = useState("Loading...");
@@ -36,6 +37,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
       .then((data) => {
         console.log("Fetched User Data:", data); // Debugging
         localStorage.setItem("UserId", data.data.id)
+        localStorage.setItem("Role", data.data.role)
         setUser(data);
         setFormData({ name: data.name, email: data.email, divisi: data.divisi, kelas: data.kelas, img: data.img });
         setLoading(false);
@@ -46,27 +48,33 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
       });
   }, []);
 
-  
-  
-
-  const handleChange = (e) => {
+const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+};
 
-  const handleFileChange = (e) => {
+const handleFileChange = (e) => {
     setFormData({ ...formData, img: e.target.files[0] });
-  };
+};
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem("authToken");
     const formDataToSend = new FormData();
   
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("divisi", formData.divisi);
-    formDataToSend.append("kelas", formData.kelas);
-    if (formData.img) {
+    // Bandingkan data yang ada dengan data yang baru
+    if (formData.name !== user.name) {
+      formDataToSend.append("name", formData.name);
+    }
+    if (formData.email !== user.email) {
+      formDataToSend.append("email", formData.email);
+    }
+    if (formData.divisi !== user.divisi) {
+      formDataToSend.append("divisi", formData.divisi);
+    }
+    if (formData.kelas !== user.kelas) {
+      formDataToSend.append("kelas", formData.kelas);
+    }
+    if (formData.img !== user.img) {
       formDataToSend.append("img", formData.img);
     }
   
@@ -94,15 +102,14 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
       console.log("API Response:", data); // Debugging
   
       // Update the user state with the new data
-      setUser(data.user);
       setEditing(false);
-      toast.success("image updated succesfully");
+      toast.success("Data updated successfully");
     } catch (err) {
       toast.error("Update Error:", err.message);
       console.error("Update Error:", err.message); // Debugging
       setError(err.message);
     }
-  };
+};
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -213,7 +220,10 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                             </div>
                           </button>
                         </div>
-                        {user.data.role === 'admin' && ( // Hanya tambahkan kondisi ini
+                        {
+                          console.log(Role)
+                        }
+                        {Role === 'admin' && ( // Hanya tambahkan kondisi ini
                           <div className="flex xl:justify-center mt-10">
                             <button
                               className={`xl:w-[10vw] ${isActive('/dashboard') ? 'bg-gray-700 rounded-lg xl:p-2 xl:w-[10vw]' : ''}`}
@@ -312,7 +322,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
                 </div>
               </button>
             </div>
-            {user.data.role === 'admin' && ( // Tambahkan kondisi ini
+            {Role === 'admin' && ( // Tambahkan kondisi ini
               <div className="flex justify-center mt-8">
                 <button
                   className={`p-2 ${isActive('/dashboard') ? 'bg-gray-700 rounded-full xl:p-3 xl:ml-2  ' : ''}`}
