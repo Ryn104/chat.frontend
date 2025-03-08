@@ -35,7 +35,7 @@ const SideBar = ({ collapsed, toggleCollapsed }) => {
         return response.json();
       })
       .then((data) => {
-        console.log("Fetched User Data:", data); // Debugging
+        console.log("Fetched User Data:", data.data.id); // Debugging
         localStorage.setItem("UserId", data.data.id)
         localStorage.setItem("Role", data.data.role)
         setUser(data);
@@ -220,9 +220,6 @@ const handleSubmit = async (e) => {
                             </div>
                           </button>
                         </div>
-                        {
-                          console.log(Role)
-                        }
                         {Role === 'admin' && ( // Hanya tambahkan kondisi ini
                           <div className="flex xl:justify-center mt-10">
                             <button

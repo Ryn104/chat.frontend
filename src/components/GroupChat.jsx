@@ -13,7 +13,7 @@ const GroupChat = ({ onBack,  onToggleDescript }) => {
   const groupId = localStorage.getItem("GroupId");
   const groupName = localStorage.getItem("GroupName") || "Unknown";
   const token = localStorage.getItem("authToken");
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("UserId");
 
   const messagesContainerRef = useRef(null); // Reference to the message container
 
@@ -40,8 +40,8 @@ const GroupChat = ({ onBack,  onToggleDescript }) => {
 
           if (response.ok) {
             const data = await response.json();
-            localStorage.setItem("userId", data.id);
-            localStorage.setItem("username", data.name);
+            localStorage.setItem("UserId", data.data.id);
+            localStorage.setItem("username", data.data.name);
           } else if (response.status === 429) {
             console.error("Rate limit exceeded. Please try again later.");
           } else {

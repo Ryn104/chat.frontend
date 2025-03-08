@@ -68,7 +68,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
 
         if (response.ok) {
           const data = await response.json();
-          localStorage.setItem("userId", data.id);
+          localStorage.setItem("UserId", data.data.id);
         } else {
           console.error("Gagal mengambil data user:", response.status);
         }
@@ -79,7 +79,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
 
     fetchUserData();
 
-    const userId = localStorage.getItem("userId");
+    const UserId = localStorage.getItem("UserId");
 
     const fetchChatData = async () => {
       try {
@@ -442,7 +442,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`chat ${message.sender_id === parseInt(localStorage.getItem("userId"))
+              className={`chat ${message.sender_id === parseInt(localStorage.getItem("UserId"))
                 ? "chat-end"
                 : "chat-start"
                 }`}
@@ -456,7 +456,7 @@ const Chat = ({ contactId, onBack, onSelectDescript }) => {
                 <p>{message.time}</p>
               </div>
               {message.sender_id ===
-                parseInt(localStorage.getItem("userId")) && (
+                parseInt(localStorage.getItem("UserId")) && (
                   <div className="opacity-100">
                     <p
                       className="cursor-pointer text-blue-500"
